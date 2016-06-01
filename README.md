@@ -26,11 +26,11 @@ An example of a JSON-LD document:
   "accountName": "goofballLogic",
   "description": "Linked person",
   "favouriteReads": {
-    "banksExcession": {
+    "banks-exc": {
       "author": "Iain M Banks",
       "name": "Excession"
     },
-    "pynchonGravitysRainbow": {
+    "pynchon-gr": {
       "author": "Thomas Pynchon",
       "name": "Gravity's Rainbow"
     }
@@ -79,7 +79,7 @@ An example of an expanded JSON-LD document:
             "@value": "Excession"
           }
         ],
-        "@index": "banksExcession"
+        "@index": "banks-exc"
       },
       {
         "https://schema.org/author": [
@@ -92,7 +92,7 @@ An example of an expanded JSON-LD document:
             "@value": "Gravity's Rainbow"
           }
         ],
-        "@index": "pynchonGravitysRainbow"
+        "@index": "pynchon-gr"
       }
     ],
     "http://xmlns.com/foaf/0.1/firstName": [
@@ -108,7 +108,16 @@ An example of an expanded JSON-LD document:
 We would like to be able to query the data in a fairly simple manner, like this:
 
 ```
-LD.query( data, LD.so.firstName ).value;
+// create the ld-query object
+var context = {
+  "so": "http://www.schema.org/",
+  "foaf": "http://xmlns.com/foaf/0.1/"
+};
+var doc = LD( data, context );
+
+// query for the values we need:
+var firstName = doc.query( "so:firstName" ).value; // "Andrew"
+var accountName = doc.query( "foaf:accountName" ).value; // "goofballLogic"
 ```
 
 [W3C JSON-LD recommendation]: https://www.w3.org/TR/json-ld/
