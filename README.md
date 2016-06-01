@@ -130,13 +130,16 @@ doc.query( "foaf:accountName" ).value;                        // "goofballLogic"
 doc.query( "so:somepropertynotinyourdocument" );              // object
 doc.query( "so:somepropertynotinyourdocument" ).value;        // undefined
 
+doc.query( "ex:favouriteReads" );                             // object
 doc.query( "ex:favouriteReads" ).query( "so:author" ).value;  // "Iain M Banks"
 doc.query( "ex:favouriteReads so:author" ).value;             // "Iain M Banks"
 
+doc.queryAll( "ex:favouriteReads so:author" );                // object
 doc.queryAll( "ex:favouriteReads so:author" ).value;          // [ "Iain M Banks", "Thomas Pynchon" ]
+doc.queryAll( "ex:favouriteReads" ).length;                   // 2
 
 doc.queryAll( "so:firstName" ).value;                         // [ "Andrew" ]
-
+doc.queryAll( "so:firstName" ).length;                        // 1
 ```
 
 [W3C JSON-LD recommendation]: https://www.w3.org/TR/json-ld/
