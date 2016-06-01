@@ -9,16 +9,19 @@ An example of a JSON-LD document:
 ```
 {
   "@context": {
-    "name": "https://schema.org/name",
-    "description": "https://schema.org/description",
-    "author": "https://schema.org/author",
-    "firstName": "http://xmlns.com/foaf/0.1/",
-    "accountName": "http://xmlns.com/foaf/0.1/accountName",
+    "so": "https://schema.org/",
+    "foaf": "http://xmlns.com/foaf/0.1/",
+    "name": "so:name",
+    "description": "so:description",
+    "author": "so:author",
+    "firstName": "foaf:firstName",
+    "accountName": "foaf:accountName",
     "favouriteReads": {
       "@id": "http://www.example.org#favouriteReads",
       "@container": "@index"
     }
   },
+  "@type": "so:Person",
   "firstName": "Andrew",
   "accountName": "goofballLogic",
   "description": "Linked person",
@@ -46,6 +49,9 @@ An example of an expanded JSON-LD document:
 ```
 [
   {
+    "@type": [
+      "https://schema.org/Person"
+    ],
     "http://xmlns.com/foaf/0.1/accountName": [
       {
         "@value": "goofballLogic"
@@ -84,7 +90,7 @@ An example of an expanded JSON-LD document:
         "@index": "pynchonGravitysRainbow"
       }
     ],
-    "http://xmlns.com/foaf/0.1/": [
+    "http://xmlns.com/foaf/0.1/firstName": [
       {
         "@value": "Andrew"
       }
