@@ -9,5 +9,5 @@ This library aims to assist with querying json-ld documents **in their expanded 
 ##Pre-requisites
 The
 
-[WFC JSON-LD specification]: https://www.w3.org/TR/json-ld/
+[W3C JSON-LD specification]: https://www.w3.org/TR/json-ld/
 [JSON-LD expansion API standard]: https://www.w3.org/TR/json-ld-api/#expansion
