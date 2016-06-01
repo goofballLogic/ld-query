@@ -120,11 +120,11 @@ var doc = LD( data, context );
 
 // query for the values we need:
 
-var firstName =    doc.query( "so:firstName" ).value;                            // "Andrew"
-var accountName =  doc.query( "foaf:accountName" ).value;                        // "goofballLogic"
-var firstAuthor  = doc.query( "ex:favouriteReads" ).query( "so:author" ).value;  // "Iain M Banks"
-var firstAuthor2 = doc.query( "ex:favouriteReads so:author" ).value;             // [ "Iain M Banks" ]
-var authors =      doc.queryAll( "ex:favouriteReads so:author" ).value;          // [ "Iain M Banks", "Thomas Pynchon" ]
+doc.query( "so:firstName" ).value;                            // "Andrew"
+doc.query( "foaf:accountName" ).value;                        // "goofballLogic"
+doc.query( "ex:favouriteReads" ).query( "so:author" ).value;  // "Iain M Banks"
+doc.query( "ex:favouriteReads so:author" ).value;             // [ "Iain M Banks" ]
+doc.queryAll( "ex:favouriteReads so:author" ).value;          // [ "Iain M Banks", "Thomas Pynchon" ]
 
 ```
 
