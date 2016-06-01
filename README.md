@@ -111,13 +111,19 @@ We would like to be able to query the data in a fairly simple manner, like this:
 // create the ld-query object
 var context = {
   "so": "http://www.schema.org/",
-  "foaf": "http://xmlns.com/foaf/0.1/"
+  "foaf": "http://xmlns.com/foaf/0.1/",
+  "ex": "http://www.example.org#"
 };
+
 var doc = LD( data, context );
 
+
 // query for the values we need:
-var firstName = doc.query( "so:firstName" ).value; // "Andrew"
-var accountName = doc.query( "foaf:accountName" ).value; // "goofballLogic"
+
+var firstName =    doc.query( "so:firstName" ).value;                       // "Andrew"
+var accountName =  doc.query( "foaf:accountName" ).value;                   // "goofballLogic"
+var authors =      doc.queryAll( "ex:favouriteReads so:author" ).value;     // [ "Iain M Banks", "Thomas Pynchon" ]
+
 ```
 
 [W3C JSON-LD recommendation]: https://www.w3.org/TR/json-ld/
