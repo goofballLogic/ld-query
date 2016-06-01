@@ -110,22 +110,32 @@ We would like to be able to query the data in a fairly simple manner, like this:
 Start by creating the ld-query object:
 
 ```
-var context = {
+var context = LD( {
   "so": "http://www.schema.org/",
   "foaf": "http://xmlns.com/foaf/0.1/",
   "ex": "http://www.example.org#"
-};
+} );
 
-var doc = LD( data, context );
+var doc = context( data );
+```
+
+or
+```
+var doc = LD( data, {
+   "so": "http://www.schema.org/",
+   "foaf": "http://xmlns.com/foaf/0.1/",
+   "ex": "http://www.example.org#"
+} );
 ```
 
 The resulting object can be queried for the properties we need:
 
 
 ```
-doc.query( "so:firstName" );                                  // object
 doc.query( "so:firstName" ).value;                            // "Andrew"
 doc.query( "foaf:accountName" ).value;                        // "goofballLogic"
+
+doc.query( "so:firstName" );                                  // object
 
 doc.query( "so:somepropertynotinyourdocument" );              // object
 doc.query( "so:somepropertynotinyourdocument" ).value;        // undefined
@@ -140,6 +150,9 @@ doc.queryAll( "ex:favouriteReads" ).length;                   // 2
 
 doc.queryAll( "so:firstName" ).value;                         // [ "Andrew" ]
 doc.queryAll( "so:firstName" ).length;                        // 1
+
+doc.query( "so:firstName" ).length;                           // 1
+
 ```
 
 [W3C JSON-LD recommendation]: https://www.w3.org/TR/json-ld/
