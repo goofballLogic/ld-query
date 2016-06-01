@@ -107,8 +107,9 @@ An example of an expanded JSON-LD document:
 
 We would like to be able to query the data in a fairly simple manner, like this:
 
+Start by creating the ld-query object:
+
 ```
-// create the ld-query object
 var context = {
   "so": "http://www.schema.org/",
   "foaf": "http://xmlns.com/foaf/0.1/",
@@ -116,10 +117,12 @@ var context = {
 };
 
 var doc = LD( data, context );
+```
+
+The resulting object can be queried for the properties we need:
 
 
-// query for the values we need:
-
+```
 doc.query( "so:firstName" );                                  // object
 doc.query( "so:firstName" ).value;                            // "Andrew"
 doc.query( "foaf:accountName" ).value;                        // "goofballLogic"
