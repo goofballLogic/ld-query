@@ -2,7 +2,7 @@
 
 A tiny lib to assist in the querying of (expanded) JSON-LD documents.
 
-tl;dr: [Examples](http://#Examples)
+tl;dr: [Examples](README.md#examples)
 
 The JSON-LD format is defined in the [W3C JSON-LD recommendation].
 
