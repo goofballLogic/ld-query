@@ -103,6 +103,13 @@ An example of an expanded JSON-LD document:
   }
 ]
 ```
+##Examples
+
+We would like to be able to query the data in a fairly simple manner, like this:
+
+```
+LD.query( data, LD.so.firstName ).value;
+```
 
 [W3C JSON-LD recommendation]: https://www.w3.org/TR/json-ld/
 [JSON-LD Processing Algorithms and API recommendation]: https://www.w3.org/TR/json-ld-api/#expansion
