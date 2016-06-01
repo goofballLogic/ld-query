@@ -1,5 +1,6 @@
 # ld-query
-A tiny lib to assist in querying JSON-LD documents.
+
+A tiny lib to assist in the querying of (expanded) JSON-LD documents.
 
 The JSON-LD format is defined in the [W3C JSON-LD specification].
 
@@ -7,7 +8,7 @@ This library aims to assist with querying json-ld documents **in their expanded 
 
 
 ##Pre-requisites
-The
+
 
 [W3C JSON-LD specification]: https://www.w3.org/TR/json-ld/
 [JSON-LD expansion API standard]: https://www.w3.org/TR/json-ld-api/#expansion
