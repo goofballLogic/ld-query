@@ -156,6 +156,8 @@ doc.query("so:firstName").length;                           // 1
 doc.query("so:somepropertynotinyourdocument");              // object
 doc.query("so:somepropertynotinyourdocument").value;        // undefined
 doc.query("so:somepropertynotinyourdocument").length;       // 0
+
+doc.queryAll("so:somepropertynotinyourdocument").value;     // []
 ```
 
 [W3C JSON-LD recommendation]: https://www.w3.org/TR/json-ld/
