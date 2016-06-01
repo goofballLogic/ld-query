@@ -123,7 +123,7 @@ var doc = LD( data, context );
 doc.query( "so:firstName" ).value;                            // "Andrew"
 doc.query( "foaf:accountName" ).value;                        // "goofballLogic"
 doc.query( "ex:favouriteReads" ).query( "so:author" ).value;  // "Iain M Banks"
-doc.query( "ex:favouriteReads so:author" ).value;             // [ "Iain M Banks" ]
+doc.query( "ex:favouriteReads so:author" ).value;             // "Iain M Banks"
 doc.queryAll( "ex:favouriteReads so:author" ).value;          // [ "Iain M Banks", "Thomas Pynchon" ]
 
 ```
