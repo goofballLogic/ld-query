@@ -43,6 +43,8 @@ An example of a JSON-LD document:
 > WTF? Why would I do this to my data?
 > Here's [a video explaining] the mechanism, which goes some way in justifying what we're doing here.
 
+> In addition, we feel that the compaction algorithm isn't completely dependable when you're not sure what data documents you are merging together, so it feels "safer" to process the expanded form.
+
 This library aims to assist with querying json-ld documents **in their expanded form**. It is worth noting that although the JSON-LD expansion algorithm is defined in the [JSON-LD Processing Algorithms and API recommendation], there's no implementation of the expansion algorithm in this library.
 
 To use this library, your data needs to be in exapnded form. You can use existing implementations of the expansion API to achieve this. For example, [jsonld.js] is a fairly mature implementation of the standard. 
