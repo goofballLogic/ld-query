@@ -132,10 +132,10 @@ The resulting object can be queried for the properties we need:
 
 
 ```
-doc.query( "so:firstName" ).value;                            // "Andrew"
-doc.query( "foaf:accountName" ).value;                        // "goofballLogic"
-
 doc.query( "so:firstName" );                                  // object
+doc.query( "so:firstName" ).value;                            // "Andrew"
+
+doc.query( "foaf:accountName" ).value;                        // "goofballLogic"
 
 doc.query( "so:somepropertynotinyourdocument" );              // object
 doc.query( "so:somepropertynotinyourdocument" ).value;        // undefined
