@@ -152,7 +152,7 @@ doc.queryAll( "so:firstName" ).value;                         // [ "Andrew" ]
 doc.queryAll( "so:firstName" ).length;                        // 1
 
 doc.query( "so:firstName" ).length;                           // 1
-
+doc.query( "so:somepropertynotinyourdocument" );              // 0
 ```
 
 [W3C JSON-LD recommendation]: https://www.w3.org/TR/json-ld/
