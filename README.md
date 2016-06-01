@@ -41,7 +41,7 @@ An example of a JSON-LD document:
 ##Expansion is a pre-requisite
 
 > WTF? Why would I do this to my data?
-> Here's a video explaining the mechanism, which goes some way in justifying what we're doing here: https://www.youtube.com/watch?v=Tm3fD89dqRE
+> Here's [a video explaining] the mechanism, which goes some way in justifying what we're doing here.
 
 This library aims to assist with querying json-ld documents **in their expanded form**. It is worth noting that although the JSON-LD expansion algorithm is defined in the [JSON-LD Processing Algorithms and API recommendation], there's no implementation of the expansion algorithm in this library.
 
@@ -105,3 +105,4 @@ An example of an expanded JSON-LD document:
 [W3C JSON-LD recommendation]: https://www.w3.org/TR/json-ld/
 [JSON-LD Processing Algorithms and API recommendation]: https://www.w3.org/TR/json-ld-api/#expansion
 [jsonld.js]: https://github.com/digitalbazaar/jsonld.js
+[a video explaining]: https://www.youtube.com/watch?v=Tm3fD89dqRE
