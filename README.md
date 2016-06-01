@@ -139,9 +139,6 @@ doc.query("so:firstName").value;                            // "Andrew"
 
 doc.query("foaf:accountName").value;                        // "goofballLogic"
 
-doc.query("so:somepropertynotinyourdocument");              // object
-doc.query("so:somepropertynotinyourdocument").value;        // undefined
-
 doc.query("ex:favouriteReads");                             // object
 doc.query("ex:favouriteReads").query("so:author").value;    // "Iain M Banks"
 doc.query("ex:favouriteReads so:author").value;             // "Iain M Banks"
@@ -155,7 +152,10 @@ doc.queryAll("so:firstName").value;                         // [ "Andrew" ]
 doc.queryAll("so:firstName").length;                        // 1
 
 doc.query("so:firstName").length;                           // 1
-doc.query("so:somepropertynotinyourdocument");              // 0
+
+doc.query("so:somepropertynotinyourdocument");              // object
+doc.query("so:somepropertynotinyourdocument").value;        // undefined
+doc.query("so:somepropertynotinyourdocument").length;       // 0
 ```
 
 [W3C JSON-LD recommendation]: https://www.w3.org/TR/json-ld/
