@@ -120,8 +120,12 @@ var doc = LD( data, context );
 
 // query for the values we need:
 
+doc.query( "so:firstName" );                                  // object
 doc.query( "so:firstName" ).value;                            // "Andrew"
 doc.query( "foaf:accountName" ).value;                        // "goofballLogic"
+
+doc.query( "so:somepropertynotinyourdocument" );              // object
+doc.query( "so:somepropertynotinyourdocument" ).value;        // undefined
 
 doc.query( "ex:favouriteReads" ).query( "so:author" ).value;  // "Iain M Banks"
 doc.query( "ex:favouriteReads so:author" ).value;             // "Iain M Banks"
