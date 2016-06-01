@@ -149,6 +149,7 @@ doc.query("ex:favouriteReads so:author").value;             // "Iain M Banks"
 doc.queryAll("ex:favouriteReads so:author");                // object
 doc.queryAll("ex:favouriteReads so:author").value;          // [ "Iain M Banks", "Thomas Pynchon" ]
 doc.queryAll("ex:favouriteReads").length;                   // 2
+doc.queryAll("ex:favouriteReads")[0].value;                 // "Iain M Banks"
 
 doc.queryAll("so:firstName").value;                         // [ "Andrew" ]
 doc.queryAll("so:firstName").length;                        // 1
