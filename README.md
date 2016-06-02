@@ -1,6 +1,6 @@
-# ld-query
-
 [![Build Status](https://travis-ci.org/goofballLogic/ld-query.svg?branch=master)](https://travis-ci.org/goofballLogic/ld-query)
+
+# ld-query
 
 A tiny lib to assist in the querying of (expanded) JSON-LD documents.
 
