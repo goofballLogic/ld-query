@@ -18,5 +18,8 @@
   "bugs": {
     "url": "https://github.com/goofballLogic/ld-query/issues"
   },
-  "homepage": "https://github.com/goofballLogic/ld-query#readme"
+  "homepage": "https://github.com/goofballLogic/ld-query#readme",
+  "devDependencies": {
+    "jasmine": "^2.4.1"
+  }
 }
