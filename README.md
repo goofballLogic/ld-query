@@ -1,5 +1,7 @@
 # ld-query
 
+mod
+
 A tiny lib to assist in the querying of (expanded) JSON-LD documents.
 
 tl;dr: [Examples](#examples)
