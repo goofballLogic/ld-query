@@ -1,9 +1,8 @@
 beforeEach( function()  {
   
-  console.log( window, typeof window );
   if( typeof window === "undefined" ) {
     
-    this.LD = require( "../src/ld-query" );
+    this.LD = require( "../../src/ld-query" );
     
   } else {
     
