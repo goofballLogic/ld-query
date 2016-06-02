@@ -1,4 +1,4 @@
-/*global LD, expect*/
+/*global expect*/
 
 describe( "Upon calling LD with data about me and my favourite books, and a context", function() {
     
@@ -68,6 +68,23 @@ describe( "Upon calling LD with data about me and my favourite books, and a cont
         it( "should have found my account name", function() {
             
             expect( found ).toBe( "Linked person" );
+            
+        } );
+        
+    } );
+    
+    describe( "Query for all favourite reads", function() {
+        
+        var found;
+        beforeEach( function() {
+            
+            found = doc.query("ex:favouriteReads");
+            
+        } );
+        
+        it( "should have returned a query object", function() {
+            
+            expect( found ).toBeTruthy();
             
         } );
         
