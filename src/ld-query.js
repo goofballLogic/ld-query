@@ -32,7 +32,7 @@
         
         }, null );
     
-    function Query( data, path ) {
+    function ldQuery( data, path ) {
         
         this.dataContext = data;
         Object.defineProperty( this, "length", { 
@@ -52,12 +52,12 @@
         } );
         
     }
-    Query.prototype.query = function( path ) {
+    ldQuery.prototype.query = function( path ) {
         
-        return new Query( this.dataContext, path );
+        return new ldQuery( this.dataContext, path );
 
     };
-    return new Query( dataContext );
+    return new ldQuery( dataContext );
 
 } ) );
     
