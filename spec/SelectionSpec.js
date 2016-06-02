@@ -73,7 +73,7 @@ describe( "Upon calling LD with data about me and my favourite books, and a cont
         
     } );
     
-    describe( "Query for all favourite reads", function() {
+    describe( "Query for favourite reads", function() {
         
         var found;
         beforeEach( function() {
