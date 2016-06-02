@@ -1,5 +1,15 @@
 beforeEach( function()  {
   
+  console.log( window, typeof window );
+  if( typeof window === "undefined" ) {
+    
+    this.LD = require( "../src/ld-query" );
+    
+  } else {
+    
+    this.LD = window.LD;
+    
+  }
   this.data = [
     {
       "@type": [

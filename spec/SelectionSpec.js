@@ -6,7 +6,7 @@ describe( "Upon calling LD with data about me and my favourite books, and a cont
     
     beforeEach( function() {
         
-        doc = LD( this.data, {
+        doc = this.LD( this.data, {
             
             "so": "http://schema.org/",
             "foaf": "http://xmlns.com/foaf/0.1/",

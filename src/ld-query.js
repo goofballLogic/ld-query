@@ -2,10 +2,11 @@
  
     if( typeof module === "object" && module.exports ) {
         
+console.log( 1 );
         module.exports = x;
         
     } else {
-        
+console.log( 2 );
         window.LD = x; 
         
     }
