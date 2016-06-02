@@ -1,0 +1,22 @@
+{
+  "name": "ld-query",
+  "version": "0.0.1",
+  "description": "A tiny library to query expanded JSON-LD documents",
+  "main": "dist/ld-query.js",
+  "scripts": {
+    "test": "jasmine"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/goofballLogic/ld-query.git"
+  },
+  "keywords": [
+    "json-ld"
+  ],
+  "author": "Andrew/Adi",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/goofballLogic/ld-query/issues"
+  },
+  "homepage": "https://github.com/goofballLogic/ld-query#readme"
+}
