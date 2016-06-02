@@ -11,7 +11,7 @@ An example of a JSON-LD document:
 ```
 {
   "@context": {
-    "so": "https://schema.org/",
+    "so": "http://schema.org/",
     "foaf": "http://xmlns.com/foaf/0.1/",
     "name": "so:name",
     "description": "so:description",
@@ -57,26 +57,26 @@ An example of an expanded JSON-LD document:
 [
   {
     "@type": [
-      "https://schema.org/Person"
+      "http://schema.org/Person"
     ],
     "http://xmlns.com/foaf/0.1/accountName": [
       {
         "@value": "goofballLogic"
       }
     ],
-    "https://schema.org/description": [
+    "http://schema.org/description": [
       {
         "@value": "Linked person"
       }
     ],
     "http://www.example.org#favouriteReads": [
       {
-        "https://schema.org/author": [
+        "http://schema.org/author": [
           {
             "@value": "Iain M Banks"
           }
         ],
-        "https://schema.org/name": [
+        "http://schema.org/name": [
           {
             "@value": "Excession"
           }
@@ -84,12 +84,12 @@ An example of an expanded JSON-LD document:
         "@index": "banks-exc"
       },
       {
-        "https://schema.org/author": [
+        "http://schema.org/author": [
           {
             "@value": "Thomas Pynchon"
           }
         ],
-        "https://schema.org/name": [
+        "http://schema.org/name": [
           {
             "@value": "Gravity's Rainbow"
           }
@@ -134,10 +134,10 @@ The resulting object can be queried for the properties we need:
 
 
 ```
-doc.query("so:firstName");                                        // object
-doc.query("so:firstName").value;                                  // "Andrew"
+doc.query("foaf:firstName");                                      // object
+doc.query("foaf:firstName").value;                                // "Andrew"
 
-doc.query("foaf:accountName").value;                              // "goofballLogic"
+doc.query("so:description").value;                                // "Linked person"
 
 doc.query("ex:favouriteReads");                                   // object
 doc.query("ex:favouriteReads").query("so:author").value;          // "Iain M Banks"
