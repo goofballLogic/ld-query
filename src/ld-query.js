@@ -12,21 +12,23 @@
 
 }( function( dataContext, context ) {
 
-    // create a function which de-aliases each key in the context object in turn
+    // this builds a set of nested functions which are capable of expanding namespace alises to full prefixes
     var expand = Object.keys( context )
-        // for each key, start with the function so far and the alias we want to de-alias
+
+        // for each alias (e.g. "so"), create a function to add to our chain
         .reduce( function( prior, alias ) {
             
             // create a regex for this alias    
             var expr = new RegExp( "^" + alias + ":", "g" );
-            // return a new master function to process the property name 
+            
+            // return a new function to process the property name 
             return function( propName ) {
                 
-                // if there was already a de-aliasing function built-up, call it first
+                // if there are already functions in the chain, call them first
                 if ( prior ) { propName = prior( propName ); }
+                
                 // then return the result of de-aliasing this alias
                 return ( propName || "" ).replace( expr, context[ alias ] );
-            
                 
             }
         
@@ -44,7 +46,7 @@
             
             get: function() {
                 
-                path = expand( path );
+                path = expand( path ); // expand our prefix to a full property name
                 return this.dataContext[ 0 ][ path ][ 0 ][ "@value" ];
                 
             } 
