@@ -141,20 +141,25 @@ The resulting object can be queried for the properties we need:
 
 
 ```
-doc.query("foaf:firstName");                                      // Query object
+doc.query("foaf:firstName");                                      // QueryNode object
 doc.query("foaf:firstName @value");                               // "Andrew"
 
 doc.query("so:description @value");                               // "Linked person"
+doc.query("@value");                                              // "goofballLogic"
 
-doc.query("ex:favouriteReads");                                   // Query object
+doc.query("ex:favouriteReads");                                   // QueryNode object
 doc.query("ex:favouriteReads").query("so:author @value")          // "Iain M Banks"
 doc.query("ex:favouriteReads so:author @value");                  // "Iain M Banks"
 doc.query("so:author @value")                                     // "Iain M Banks"
+doc.query("ex:favouriteReads @value");                            // "Iain M Banks"
 
-doc.queryAll("ex:favouriteReads so:author");                      // Query object
+doc.query("ex:favouriteReads").json();                            // { "http://schema.org/author": [ { "@value": "Iain M Banks" } ], http://schema.org/name": [ { "@value": "Excession" } ], "@index": "banks-exc" }
+
+doc.queryAll("ex:favouriteReads so:author");                      // QueryNodeList object
 doc.queryAll("ex:favouriteReads so:author @value");               // [ "Iain M Banks", "Thomas Pynchon" ]
 doc.queryAll("ex:favouriteReads").length;                         // 2
-doc.queryAll("ex:favouriteReads")[0].query( "@value" );           // "Iain M Banks"
+
+doc.queryAll("ex:favouriteReads")[0]                              // QueryNode object
 
 doc.queryAll("so:firstName @value");                              // [ "Andrew" ]
 doc.queryAll("so:firstName").length;                              // 1
