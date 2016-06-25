@@ -37,4 +37,24 @@ module.exports = function() {
         
     } );
     
+    this.When(/^I query the result for "([^"]*)"$/, function( selector ) {
+        
+        this.result = this.result.query( selector );
+        
+    } );
+    
+    this.When(/^I get the result's json$/, function () {
+       
+       this.json = this.result.json();
+       
+    } );
+    
+    this.Then(/^the json should match$/, function (table) {
+        
+        var actual = JSON.stringify( JSON.parse( table.hashes()[ 0 ].json ) );
+        var expected = JSON.stringify( this.json );
+        actual.should.match( expected );
+        
+    } );
+    
 };

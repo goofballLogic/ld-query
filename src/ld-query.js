@@ -56,14 +56,22 @@
                 
             }
             
-        }
-        for( var key in json ) {
+        } else {
+            
+            for( var key in json ) {
+    
+                var proposedPath = path.concat( [ key ] );
+                if ( assessPath( proposedPath ) ) { 
+                    
+                    var found = json[ key ];
+                    return isArray( found ) ? found[ 0 ] : found;
+                    
+                }
+                var foundInProp = seek( json[ key ], assessPath, path.concat( [ key ] ) );
+                if ( foundInProp ) { return foundInProp; }
 
-            var proposedPath = path.concat( [ key ] );
-            if ( assessPath( proposedPath ) ) { return json[ key ]; }
-            var foundInProp = seek( json[ key ], assessPath, [ key ] );
-            if ( foundInProp ) { return foundInProp; }
-
+            }
+        
         }
         
     }
@@ -99,15 +107,15 @@
 
     }
     
-    function QueryNode( json ) {
+    function QueryNode( jsonData ) {
     
-        this.json = json;
+        this.json = function() { return jsonData; };
 
     }
     QueryNode.prototype.query = function( path ) {
 
         // select the json targetted by this path    
-        var selection = select( this.json, path );
+        var selection = select( this.json(), path );
         // if the selection is "final" (e.g. @value), just return the json raw
         return selection.isFinal ? selection.json : new QueryNode( selection.json );
         

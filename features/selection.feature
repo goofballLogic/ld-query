@@ -28,4 +28,23 @@ Feature: select values using query syntax
     Scenario: Query for a property which isn't present on every branch of the tree
       When I query for "ex:note-to-self @value"
       Then the result should be "Need to finish reading this"
+    
+    Scenario: Query for item in collection
+      When I query for "ex:favouriteReads so:author @value"
+      Then the result should be "Iain M Banks"
       
+    Scenario: Query for an item in a collection using method chaining
+      Given I query for "ex:favouriteReads"
+      When I query the result for "so:author @value"
+      Then the result should be "Iain M Banks"
+    
+    Scenario: Query for the first item in a collection not at the top level
+      When I query for "so:author @value"
+      Then the result should be "Iain M Banks"
+    
+    Scenario: Get the JSON for a selected item
+      Given I query for "ex:favouriteReads"
+      When I get the result's json
+      Then the json should match
+        | json |
+        | { "http://schema.org/author": [ { "@value": "Iain M Banks" } ], "http://schema.org/name": [ { "@value": "Excession" } ], "@index": "banks-exc" } |
