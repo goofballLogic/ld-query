@@ -107,6 +107,11 @@ An example of an expanded JSON-LD document:
   }
 ]
 ```
+
+##Structure
+
+We are trying to implement functionality which follows where possible the definition established by the [DOM querySelector] and [DOM querySelectorAll] APIs. Because the definitions will only ever by analogous to each other, we use "query" and "queryAll" rather than "querySelector" and "querySelectorAll".
+
 ##Examples
 
 We would like to be able to query the data in a fairly simple manner, like this:
@@ -136,35 +141,38 @@ The resulting object can be queried for the properties we need:
 
 
 ```
-doc.query("foaf:firstName");                                      // object
-doc.query("foaf:firstName").value;                                // "Andrew"
+doc.query("foaf:firstName");                                      // Query object
+doc.query("foaf:firstName @value");                               // "Andrew"
 
-doc.query("so:description").value;                                // "Linked person"
+doc.query("so:description @value");                               // "Linked person"
 
-doc.query("ex:favouriteReads");                                   // object
-doc.query("ex:favouriteReads").query("so:author").value;          // "Iain M Banks"
-doc.query("ex:favouriteReads so:author").value;                   // "Iain M Banks"
+doc.query("ex:favouriteReads");                                   // Query object
+doc.query("ex:favouriteReads").query("so:author @value")          // "Iain M Banks"
+doc.query("ex:favouriteReads so:author @value");                  // "Iain M Banks"
+doc.query("so:author @value")                                     // "Iain M Banks"
 
-doc.queryAll("ex:favouriteReads so:author");                      // object
-doc.queryAll("ex:favouriteReads so:author").value;                // [ "Iain M Banks", "Thomas Pynchon" ]
+doc.queryAll("ex:favouriteReads so:author");                      // Query object
+doc.queryAll("ex:favouriteReads so:author @value");               // [ "Iain M Banks", "Thomas Pynchon" ]
 doc.queryAll("ex:favouriteReads").length;                         // 2
-doc.queryAll("ex:favouriteReads")[0].value;                       // "Iain M Banks"
+doc.queryAll("ex:favouriteReads")[0].query( "@value" );           // "Iain M Banks"
 
-doc.queryAll("so:firstName").value;                               // [ "Andrew" ]
+doc.queryAll("so:firstName @value");                              // [ "Andrew" ]
 doc.queryAll("so:firstName").length;                              // 1
 
 doc.query("so:firstName").length;                                 // 1
 
 doc.query("so:somepropertynotinyourdocument");                    // object
-doc.query("so:somepropertynotinyourdocument").value;              // undefined
+doc.query("so:somepropertynotinyourdocument @value")              // undefined
 doc.query("so:somepropertynotinyourdocument").length;             // 0
 
-doc.queryAll("so:somepropertynotinyourdocument").value;           // []
+doc.queryAll("so:somepropertynotinyourdocument @value")           // []
 
-doc.query("so:favouriteReads[@index=pynchon_gp] so:name").value   // "Gravity's Rainbox" 
+doc.query("so:favouriteReads[@index=pynchon_gp] so:name @value")  // "Gravity's Rainbox" 
 ```
 
 [W3C JSON-LD recommendation]: https://www.w3.org/TR/json-ld/
 [JSON-LD Processing Algorithms and API recommendation]: https://www.w3.org/TR/json-ld-api/#expansion
 [jsonld.js]: https://github.com/digitalbazaar/jsonld.js
 [a video explaining]: https://www.youtube.com/watch?v=Tm3fD89dqRE
+[DOM querySelector]: https://www.w3.org/TR/selectors-api2/#queryselector
+[DOM querySelectorAll]: https://www.w3.org/TR/selectors-api2/#queryselectorall
