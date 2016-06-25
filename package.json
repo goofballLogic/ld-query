@@ -4,7 +4,7 @@
   "description": "A tiny library to query expanded JSON-LD documents",
   "main": "dist/ld-query.js",
   "scripts": {
-    "test": "jasmine"
+    "test": "./node_modules/.bin/cucumberjs"
   },
   "repository": {
     "type": "git",
@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/goofballLogic/ld-query#readme",
   "devDependencies": {
-    "jasmine": "^2.4.1"
+    "cucumber": "^1.2.0",
+    "should": "^9.0.2"
   }
 }

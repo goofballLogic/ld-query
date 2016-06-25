@@ -12,6 +12,13 @@
 
 }( function( dataContext, context ) {
 
+    // a fallback for missing Array.isArray
+    var isArray = Array.isArray || function( arg ) {
+        
+        return Object.prototype.toString.call( arg ) === "[object Array]";
+    
+    };
+    
     // this builds a set of nested functions which are capable of expanding namespace alises to full prefixes
     var expand = Object.keys( context )
 
@@ -33,33 +40,83 @@
             }
         
         }, null );
-    
-    function ldQuery( data, path ) {
+
+    // seek a node which passess the test for the path to the node
+    function seek( json, assessPath, path ) {
         
-        this.dataContext = data;
-        Object.defineProperty( this, "length", { 
+        path = path || [];
+        if ( !json ) { return null; }
+        if ( typeof json !== "object" ) { return null; }
+        if ( isArray( json ) ) {
             
-            value: 1 
-            
-        } );
-        Object.defineProperty( this, "value", {
-            
-            get: function() {
+            for( var i = 0; i < json.length; i++ ) {
                 
-                path = expand( path ); // expand our prefix to a full property name
-                return this.dataContext[ 0 ][ path ][ 0 ][ "@value" ];
+                var foundInItem = seek( json[ i ], assessPath, path.concat( [ i ] ) );
+                if ( foundInItem ) { return foundInItem; }
                 
-            } 
+            }
             
-        } );
+        }
+        for( var key in json ) {
+
+            var proposedPath = path.concat( [ key ] );
+            if ( assessPath( proposedPath ) ) { return json[ key ]; }
+            var foundInProp = seek( json[ key ], assessPath, [ key ] );
+            if ( foundInProp ) { return foundInProp; }
+
+        }
         
     }
-    ldQuery.prototype.query = function( path ) {
+    
+    // select json for this path
+    function select( json, path ) {
         
-        return new ldQuery( this.dataContext, path );
+        var steps = path.split( " " ).map( function( step ) { return expand( step ); } );
+        if ( !steps.length ) { return { json: null }; }
+        var found = seek( 
+            
+            json,
+            function assessPath( nodePath ) {
 
+                var bookmark = 0;
+                return steps.every( function( step ) {
+                    
+                    bookmark = nodePath.indexOf( step, bookmark );
+                    return ~bookmark // truthy if step found in the remaining part of node path
+                    
+                } );
+
+            }
+        
+        );
+        var lastStep = steps[ steps.length - 1 ];
+        return {
+            
+            json: found ? found : null,
+            isFinal: !found || lastStep === "@value"
+            
+        };
+
+    }
+    
+    function QueryNode( json ) {
+    
+        this.json = json;
+
+    }
+    QueryNode.prototype.query = function( path ) {
+
+        // select the json targetted by this path    
+        var selection = select( this.json, path );
+        // if the selection is "final" (e.g. @value), just return the json raw
+        return selection.isFinal ? selection.json : new QueryNode( selection.json );
+        
     };
-    return new ldQuery( dataContext );
+    QueryNode.prototype.queryAll = function( ) {
+        
+        
+    };
+    return new QueryNode( dataContext );
 
 } ) );
     

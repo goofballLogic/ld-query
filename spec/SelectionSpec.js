@@ -16,30 +16,32 @@ describe( "Upon calling LD with data about me and my favourite books, and a cont
         
     } );
     
-    it( "should have created an ld-query object", function() {
+    it( "Then it should have created an ld-query object", function() {
         
         expect( doc ).toBeTruthy();
         
     } );
     
-    describe( "Query for first name node", function() {
+    describe( "Given a query for first name node", function() {
         
         var found;
         beforeEach( function() {
             
-            found = doc.query( "so:firstName" );
+            found = doc.query( "foaf:firstName" );
             
         } );
         
-        it( "should have found one node", function() {
+        it( "Then it should have found one query node", function() {
             
-            expect( found.length ).toBe( 1 );
+            expect( found ).toExist();
+            expect( found.query ).toExist();
+            expect( found.queryAll ).toExist();
             
         } );
         
     } );
     
-    describe( "Query for first name", function() {
+    describe( "Given a query for first name", function() {
         
         var found;
         beforeEach( function() { 
@@ -48,7 +50,7 @@ describe( "Upon calling LD with data about me and my favourite books, and a cont
             
         } );
         
-        it( "should have found my first name", function() {
+        it( "Then it should have found my first name", function() {
             
             expect( found ).toBe( "Andrew" );
             
@@ -56,7 +58,7 @@ describe( "Upon calling LD with data about me and my favourite books, and a cont
         
     } );
     
-    describe( "Query for my description", function() {
+    describe( "Given a query for my description", function() {
     
         var found;
         beforeEach( function() {
@@ -65,7 +67,7 @@ describe( "Upon calling LD with data about me and my favourite books, and a cont
             
         } );
         
-        it( "should have found my account name", function() {
+        it( "Then it should have found my account name", function() {
             
             expect( found ).toBe( "Linked person" );
             
@@ -73,7 +75,7 @@ describe( "Upon calling LD with data about me and my favourite books, and a cont
         
     } );
     
-    describe( "Query for favourite reads", function() {
+    describe( "Given a query for favourite reads", function() {
         
         var found;
         beforeEach( function() {
@@ -82,9 +84,26 @@ describe( "Upon calling LD with data about me and my favourite books, and a cont
             
         } );
         
-        it( "should have returned a query object", function() {
+        it( "Then it should have returned a query object", function() {
             
             expect( found ).toBeTruthy();
+            
+        } );
+        
+    } );
+    
+    describe( "Given a query for favourite reads' author", function() {
+        
+        var found;
+        beforeEach( function() {
+            
+            found = doc.query("ex:favouriteReads").query("so:author").value;
+            
+        } );
+        
+        it( "Then the author query should have executed against the result of the favouriteReads query and returned the first value", function() {
+            
+            expect( found ).toBe( "Iain M Banks" );
             
         } );
         
