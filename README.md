@@ -166,9 +166,8 @@ doc.queryAll("so:firstName").length;                              // 1
 
 doc.query("so:firstName").length;                                 // 1
 
-doc.query("so:somepropertynotinyourdocument");                    // object
-doc.query("so:somepropertynotinyourdocument @value")              // undefined
-doc.query("so:somepropertynotinyourdocument").length;             // 0
+doc.query("so:somepropertynotinyourdocument");                    // null
+doc.query("so:somepropertynotinyourdocument @value")              // null
 
 doc.queryAll("so:somepropertynotinyourdocument @value")           // []
 
