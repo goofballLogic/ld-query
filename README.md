@@ -153,7 +153,7 @@ doc.query("ex:favouriteReads so:author @value");                  // "Iain M Ban
 doc.query("so:author @value")                                     // "Iain M Banks"
 doc.query("ex:favouriteReads @value");                            // "Iain M Banks"
 
-doc.query("ex:favouriteReads").json();                            // { "http://schema.org/author": [ { "@value": "Iain M Banks" } ], http://schema.org/name": [ { "@value": "Excession" } ], "@index": "banks-exc" }
+doc.query("ex:favouriteReads so:author").json();                  // { "http://schema.org/author": [ { "@value": "Iain M Banks" } ], http://schema.org/name": [ { "@value": "Excession" } ], "@index": "banks-exc" }
 
 doc.queryAll("ex:favouriteReads so:author");                      // QueryNodeList object
 doc.queryAll("ex:favouriteReads so:author @value");               // [ "Iain M Banks", "Thomas Pynchon" ]
