@@ -155,9 +155,9 @@ doc.query("ex:favouriteReads @value");                            // "Iain M Ban
 
 doc.query("ex:favouriteReads so:author").json();                  // { "http://schema.org/author": [ { "@value": "Iain M Banks" } ], http://schema.org/name": [ { "@value": "Excession" } ], "@index": "banks-exc" }
 
-doc.queryAll("ex:favouriteReads so:author");                      // array of QueryNode objects
+doc.queryAll("ex:favouriteReads so:author");                      // array of 2 QueryNode objects
 doc.queryAll("ex:favouriteReads so:author @value");               // [ "Iain M Banks", "Thomas Pynchon" ]
-doc.queryAll("ex:favouriteReads").length;                         // 2
+doc.queryAll("ex:favouriteReads").length;                         // 1
 
 doc.queryAll("ex:favouriteReads")[0]                              // QueryNode object
 
