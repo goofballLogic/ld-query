@@ -51,7 +51,7 @@ Feature: select values using query syntax
 
     Scenario: Query for the author nodes
         When I query for all "ex:favouriteReads so:author"
-        Then the result should be a QueryNodeList with 2 nodes
+        Then the result should be an array of 2 QueryNodes
       
     Scenario: Query for author nodes, then for names
         When I query for all "ex:favouriteReads so:author"

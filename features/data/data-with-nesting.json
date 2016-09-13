@@ -1,0 +1,24 @@
+{
+    
+    "@type": [
+        "http://www.example.org#divitis"
+    ],
+    "http://www.example.org#div": [ {
+        
+        "@value": "How is it hanging?"
+        
+    }, {
+        
+        "http://www.example.org#div": [ {
+        
+            "http://www.example.org#div": [ {
+            
+                "@value": "Lots of divs here, yo?"
+                
+            } ]
+            
+        } ]
+        
+    } ]
+    
+}

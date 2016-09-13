@@ -1,4 +1,5 @@
 var favouriteReads = JSON.stringify( require( "../data/person-favourite-reads.json" ) );
+var dataWithNesting = JSON.stringify( require( "../data/data-with-nesting.json" ) );
 var ldQuery = require( "../../src/ld-query" );
 var should = require( "should" );
 
@@ -17,6 +18,12 @@ module.exports = function() {
         
     } );
     
+    this.Given(/^the sample data containing recursive constructs is loaded$/, function () {
+         
+         this.data = JSON.parse( dataWithNesting );
+         
+    } );
+       
     this.Given(/^I construct an ldQuery object using <context>$/, function (table) {
         
         this.context = JSON.parse( table.hashes()[ 0 ].context );
@@ -77,7 +84,7 @@ module.exports = function() {
         
     } );
     
-    this.Then(/^the result should be a QueryNodeList with (\d+) nodes$/, function ( nodeCount ) {
+    this.Then(/^the result should be an array of (\d+) QueryNodes$/, function ( nodeCount ) {
     
         should.exist( this.result, "No query list object found" );
         this.result.length.should.eql( parseInt( nodeCount ) );
