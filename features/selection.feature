@@ -6,7 +6,7 @@ Feature: select values using query syntax
   Background: Load sample data
     Given the sample data containing favourite reads is loaded
     And I construct an ldQuery object using <context>
-        | context                                                                                                   |
+        | context                                                                                               |
         | { "so": "http://schema.org/", "foaf": "http://xmlns.com/foaf/0.1/", "ex": "http://www.example.org#" } |
     
     Scenario: Query for the first name node
@@ -46,5 +46,16 @@ Feature: select values using query syntax
       Given I query for "ex:favouriteReads"
       When I get the result's json
       Then the json should match
-        | json |
-        | { "http://schema.org/author": [ { "@value": "Iain M Banks" } ], "http://schema.org/name": [ { "@value": "Excession" } ], "@index": "banks-exc" } |
+        | json                                                                                                                                             |
+        | [ { "http://schema.org/author": [ { "@value": "Iain M Banks" } ], "http://schema.org/name": [ { "@value": "Excession" } ], "@index": "banks-exc" }, { "http://schema.org/author": [ { "@value": "Thomas Pynchon" } ], "http://schema.org/name": [ { "@value": "Gravity's Rainbow" } ], "http://www.example.org#note-to-self": [ { "@value": "Need to finish reading this" } ], "@index": "pynchon-gr" } ] |
+
+    Scenario: Query for the author nodes
+        When I query for all "ex:favouriteReads so:author"
+        Then the result should be a QueryNodeList with 2 nodes
+      
+    Scenario: Query for author nodes, then for names
+        When I query for all "ex:favouriteReads so:author"
+        And then I query the result for all "@value"
+        Then the result should be an array [ "Iain M Banks" ]
+
+    Scenario: Query for recursive properties

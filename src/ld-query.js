@@ -37,92 +37,129 @@
                 // then return the result of de-aliasing this alias
                 return ( propName || "" ).replace( expr, context[ alias ] );
                 
-            }
+            };
         
         }, null );
 
-    // seek a node which passess the test for the path to the node
-    function seek( json, assessPath, path ) {
-        
+    
+    function seek( json, assessPath, isSeekAll, path ) {
+
+        var acc = isSeekAll ? [] : null;
         path = path || [];
-        if ( !json ) { return null; }
-        if ( typeof json !== "object" ) { return null; }
-        if ( isArray( json ) ) {
+        if ( !json ) { return acc; }
+        if ( assessPath( path ) ) {
+
+            if ( !isSeekAll ) { return json; }
+            acc.push( json );
+            
+            
+        } else if ( isArray( json ) ) {
             
             for( var i = 0; i < json.length; i++ ) {
                 
-                var foundInItem = seek( json[ i ], assessPath, path.concat( [ i ] ) );
-                if ( foundInItem ) { return foundInItem; }
+                var found = seek( json[ i ], assessPath, isSeekAll, path )
+                if ( found ) {
+
+                    if ( !isSeekAll ) { return found; }
+                    acc = acc.concat( found );
+
+                }
                 
             }
             
-        } else {
+        } else if ( typeof json === "object" ) {
             
-            for( var key in json ) {
-    
-                var proposedPath = path.concat( [ key ] );
-                if ( assessPath( proposedPath ) ) { 
+            for( var prop in json ) {
+                
+                var propPath = path.concat( prop );
+                var found = seek( json[ prop ], assessPath, isSeekAll, propPath )
+                if ( found ) {
                     
-                    var found = json[ key ];
-                    return isArray( found ) ? found[ 0 ] : found;
+                    if( !isSeekAll ) { return found; }
+                    acc = acc.concat( found );
                     
                 }
-                var foundInProp = seek( json[ key ], assessPath, path.concat( [ key ] ) );
-                if ( foundInProp ) { return foundInProp; }
-
+                
             }
-        
+            
         }
-        
+        return acc;
+
     }
     
+    function assessPathForSteps( steps ) {
+
+        return function assessPath( nodePath ) {
+
+            var bookmark = 0;
+            if ( !nodePath ) { return false; }
+            return steps.every( function( step ) {
+                
+                // find the next step starting from the bookmarked offset
+                bookmark = nodePath.indexOf( step, bookmark );
+                // the test passes if the step was found
+                return ~bookmark;
+                
+            } );
+            
+        };
+
+    }
+            
     // select json for this path
     function select( json, path ) {
         
-        var steps = path.split( " " ).map( function( step ) { return expand( step ); } );
+        var steps = path.split( " " ).map( expand );
         if ( !steps.length ) { return { json: null }; }
-        var found = seek( 
-            
-            json,
-            function assessPath( nodePath ) {
-
-                var bookmark = 0;
-                return steps.every( function( step ) {
-                    
-                    bookmark = nodePath.indexOf( step, bookmark );
-                    return ~bookmark // truthy if step found in the remaining part of node path
-                    
-                } );
-
-            }
-        
-        );
+        var found = seek( json, assessPathForSteps( steps ) );
         var lastStep = steps[ steps.length - 1 ];
         return {
             
-            json: found ? found : null,
-            isFinal: !found || lastStep === "@value"
+            json: found,
+            isFinal: ( found === null ) || lastStep === "@value"
             
         };
 
     }
     
+    // select jsons for this path
+    function selectAll( json, path ) {
+        
+        var steps = path.split( " " ).map( expand );
+        if ( !steps.length ) { return { json: [] }; }
+        var found = seek( json, assessPathForSteps( steps ), true );
+        var lastStep = steps[ steps.length - 1 ];
+        return {
+            
+            json: found,
+            isFinal: ( found === [] ) || lastStep === "@value"
+            
+        };
+        
+    }
     function QueryNode( jsonData ) {
     
         this.json = function() { return jsonData; };
 
     }
+    
+    function buildQueryNode( jsonData ) { return new QueryNode( jsonData ); }
+    
     QueryNode.prototype.query = function( path ) {
 
         // select the json targetted by this path    
         var selection = select( this.json(), path );
-        // if the selection is "final" (e.g. @value), just return the json raw
+        // if the result is "final" (e.g. @value), just return the json raw
         return selection.isFinal ? selection.json : new QueryNode( selection.json );
         
     };
-    QueryNode.prototype.queryAll = function( ) {
+    QueryNode.prototype.queryAll = function( path ) {
         
-        
+        // select the json targetted by this path
+        var selections = selectAll( this.json(), path );
+        // if the result is "final" (e.g. @value), return an array of the raw json
+        return selections.isFinal ? selections.json : selections.json.map( buildQueryNode );
+
     };
     return new QueryNode( dataContext );
 
