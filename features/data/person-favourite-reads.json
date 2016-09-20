@@ -18,6 +18,14 @@
         "@index": "banks-exc"
     }, {
         "http://schema.org/author": [{
+            "@value": "Iain M Banks"
+        }],
+        "http://schema.org/name": [{
+            "@value": "The Player of Games"
+        }],
+        "@index": "banks-pog"
+    }, {
+        "http://schema.org/author": [{
             "@value": "Thomas Pynchon"
         }],
         "http://schema.org/name": [{
