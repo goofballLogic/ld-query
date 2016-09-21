@@ -3,6 +3,7 @@
 # ld-query
 
 A tiny lib to assist in the querying of (expanded) JSON-LD documents.
+The library uses ES5-compatible code, so you can run it on older browsers or servers without needing to transpile it.
 
 tl;dr: [Examples](#examples)
 
