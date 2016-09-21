@@ -172,7 +172,10 @@ doc.query("so:somepropertynotinyourdocument @value")              // null
 
 doc.queryAll("so:somepropertynotinyourdocument @value")           // []
 
-doc.query("so:favouriteReads[@index=pynchon_gp] so:name @value")  // "Gravity's Rainbox" 
+doc.query("ex:favouriteReads[@index=pynchon_gp] so:name @value")  // "Gravity's Rainbox" 
+
+doc.queryAll("ex:favouriteReads @index")                          // [ "banks-exc", "pynchon-gr" ]
+doc.query("ex:favouriteReads @id")                                // [ "http://www.isbnsearch.org/isbn/9780553575378" ]
 ```
 
 [W3C JSON-LD recommendation]: https://www.w3.org/TR/json-ld/
