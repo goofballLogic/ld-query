@@ -2,7 +2,7 @@ Feature: select values using query syntax against documents with recursive prope
   As a developer working with JSON-LD
   I want to be able to use familiar syntax to query a JSON-LD document
   So that I don't need to manually parse the expanded JSON tree
-  
+
   Background: Load sample data
     Given the sample data containing recursive constructs is loaded
     And I construct an ldQuery object using <context>
