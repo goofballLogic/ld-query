@@ -62,11 +62,6 @@ An example of an expanded JSON-LD document:
     "@type": [
       "http://schema.org/Person"
     ],
-    "http://xmlns.com/foaf/0.1/accountName": [
-      {
-        "@value": "goofballLogic"
-      }
-    ],
     "http://schema.org/description": [
       {
         "@value": "Linked person"
@@ -74,6 +69,8 @@ An example of an expanded JSON-LD document:
     ],
     "http://www.example.org#favouriteReads": [
       {
+        "@id": "http://www.isbnsearch.org/isbn/9780553575378",
+        "@index": "banks-exc",
         "http://schema.org/author": [
           {
             "@value": "Iain M Banks"
@@ -83,10 +80,11 @@ An example of an expanded JSON-LD document:
           {
             "@value": "Excession"
           }
-        ],
-        "@index": "banks-exc"
+        ]
       },
       {
+        "@id": "http://www.isbnsearch.org/isbn/9780143039945",
+        "@index": "pynchon-gr",
         "http://schema.org/author": [
           {
             "@value": "Thomas Pynchon"
@@ -97,7 +95,16 @@ An example of an expanded JSON-LD document:
             "@value": "Gravity's Rainbow"
           }
         ],
-        "@index": "pynchon-gr"
+        "http://www.example.org#note-to-self": [
+          {
+            "@value": "Need to finish reading this"
+          }
+        ]
+      }
+    ],
+    "http://xmlns.com/foaf/0.1/accountName": [
+      {
+        "@value": "goofballLogic"
       }
     ],
     "http://xmlns.com/foaf/0.1/firstName": [
