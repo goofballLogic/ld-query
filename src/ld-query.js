@@ -47,6 +47,7 @@
 
     };
 
+    // recursive seek method
     function seek( json, remainingMatchers, isSeekAll, matches ) {
 
         matches = matches || [];
@@ -105,25 +106,6 @@
 
     }
 
-    function extractValue( entry ) {
-
-        if ( isArray( entry ) ) {
-
-            return entry.map( function( value ) { return extractValue( value ); } )
-                .filter( function( x ) { return x } );
-
-        } else if ( entry[ "@value" ] ) {
-
-            return entry[ "@value" ];
-
-        } else {
-
-            return entry;
-
-        }
-
-    }
-
     function pathMatcher( entry ) {
 
         var expandedEntry = expand( entry );
@@ -139,18 +121,9 @@
 
         return function( prop, propValue ) {
 
-            var found = seek( propValue, [ pathMatcher( attribute ) ], true );
+            var found = select( propValue, attribute + " @value", true ).json;
             if ( !value ) { return found.length; }
-            for ( var i = 0; i < found.length; i ++ ) {
-
-                if ( extractValue( found[ i ] ).indexOf( value ) >= 0 ) {
-
-                    return true;
-
-                }
-
-            }
-            return false;
+            return found.indexOf( value ) >= 0;
 
         };
 
@@ -172,7 +145,7 @@
         var remainder = path;
         while ( remainder.length > 0 ) {
 
-            var where = /^(\[.*\])(.*)/.exec( remainder );
+            var where = /^(\[.+?\])(.*)/.exec( remainder );
             if ( where ) {
 
                 pieces.push( where[ 1 ] );
@@ -182,7 +155,7 @@
 
                 var splitAt = remainder.search( / |\[/ );
                 pieces.push( splitAt < 0 ? remainder : remainder.substring( 0, splitAt ) );
-                remainder = splitAt < 0 ? "" : remainder.slice( splitAt ).trim();                
+                remainder = splitAt < 0 ? "" : remainder.slice( splitAt ).trim();
 
             }
 

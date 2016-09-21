@@ -83,4 +83,20 @@ Feature: select values using query syntax
       Given I query for all "ex:favouriteReads[so:author=Iain M Banks] so:name @value"
       Then the result should be an array [ "Excession", "The Player of Games" ]
 
-    Scenario: Query for recursive properties
+    Scenario: Query for favourite reads for a specific author and title
+      Given I query for all "ex:favouriteReads[so:author=Iain M Banks][so:name=Excession]"
+      Then the result should be an array of 1 QueryNodes
+
+    Scenario: Query for favourite reads for a specific author and title, then get the json
+      Given I query for all "ex:favouriteReads[so:author=Iain M Banks][so:name=Excession]"
+      When I get the json for each result
+      Then the the first json should match
+        | json                                                                                                                                             |
+        | { "http://schema.org/author": [ { "@value": "Iain M Banks" } ], "http://schema.org/name": [ { "@value": "Excession" } ], "@index": "banks-exc" } |
+
+    Scenario: Query for favourite reads for a specific author and title, then get the index
+      Given I query for "ex:favouriteReads[so:author=Iain M Banks][so:name=Excession] @index"
+      When I get the result's json
+      Then the json should match
+        | json        |
+        | "banks-exc" |
