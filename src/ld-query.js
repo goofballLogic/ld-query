@@ -133,7 +133,7 @@
 
         return pathElements.map( function( element ) {
 
-            return element.startsWith( "[" ) ? whereMatcher( element ): pathMatcher( element );
+            return element.indexOf( "[" ) === 0 ? whereMatcher( element ): pathMatcher( element );
 
         } );
 
