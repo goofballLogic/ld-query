@@ -14,32 +14,32 @@ An example of a JSON-LD document:
 ```
 {
   "@context": {
-    "so": "http://schema.org/",
-    "foaf": "http://xmlns.com/foaf/0.1/",
-    "name": "so:name",
-    "description": "so:description",
-    "author": "so:author",
-    "firstName": "foaf:firstName",
-    "accountName": "foaf:accountName",
+    "@vocab": "http://schema.org/",
+    "note-to-self": "http://www.example.org#note-to-self",
+    "firstName": "http://xmlns.com/foaf/0.1/firstName",
+    "accountName": "http://xmlns.com/foaf/0.1/accountName",
     "favouriteReads": {
       "@id": "http://www.example.org#favouriteReads",
       "@container": "@index"
     }
   },
-  "@type": "so:Person",
-  "firstName": "Andrew",
-  "accountName": "goofballLogic",
+  "@type": "Person",
   "description": "Linked person",
   "favouriteReads": {
     "banks-exc": {
+      "@id": "http://www.isbnsearch.org/isbn/9780553575378",
       "author": "Iain M Banks",
       "name": "Excession"
     },
     "pynchon-gr": {
+      "@id": "http://www.isbnsearch.org/isbn/9780143039945",
       "author": "Thomas Pynchon",
-      "name": "Gravity's Rainbow"
+      "name": "Gravity's Rainbow",
+      "note-to-self": "Need to finish reading this"
     }
-  }
+  },
+  "accountName": "goofballLogic",
+  "firstName": "Andrew"
 }
 ```
 
