@@ -2,7 +2,7 @@
   "name": "ld-query",
   "version": "0.0.1",
   "description": "A tiny library to query expanded JSON-LD documents",
-  "main": "dist/ld-query.js",
+  "main": "src/ld-query.js",
   "scripts": {
     "test": "./node_modules/.bin/cucumberjs"
   },
