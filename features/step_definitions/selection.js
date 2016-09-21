@@ -45,7 +45,7 @@ module.exports = function() {
             throw new Error( "Result was final - can't query any further" );
 
         }
-        const querySite = [].concat( this.result || [] )[ 0 ];
+        var querySite = [].concat( this.result || [] )[ 0 ];
         this.result = isAll ? querySite.queryAll( selector ) : querySite.query( selector );
 
     } );
@@ -108,7 +108,7 @@ module.exports = function() {
 
     this.When(/^I get the json for each result$/, function () {
 
-        this.json = this.result.map( queryNode => queryNode.json() );
+        this.json = this.result.map( function( queryNode ) { return queryNode.json() } );
 
     } );
 
