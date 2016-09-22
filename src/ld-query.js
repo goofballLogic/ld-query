@@ -47,102 +47,110 @@
 
         }, null );
 
+    function seekInObject( json, remainingMatchers, isSeekAll, found ) {
 
-    function seek( json, assessPath, isSeekAll, path ) {
+        var currentMatcher = remainingMatchers[ 0 ];
+        if ( currentMatcher.where ) {
 
-        var acc = isSeekAll ? [] : null;
-        path = path || [];
-        if ( !json ) { return acc; }
-        if ( assessPath( path ) ) {
+            // if the current matcher is a 'where' evaluate against the json itself
+            if ( json[ currentMatcher.where ] === currentMatcher.value ) {
 
-            if ( !isSeekAll ) { return json; }
-            acc.push( json );
-
-
-        } else if ( isArray( json ) ) {
-
-            for( var i = 0; i < json.length; i++ ) {
-
-                var found = seek( json[ i ], assessPath, isSeekAll, path )
-                if ( found ) {
-
-                    if ( !isSeekAll ) { return found; }
-                    acc = acc.concat( found );
-
-                }
+                if ( remainingMatchers.length === 1 ) { found.push( json ); }
+                else { seek( json, remainingMatchers.slice( 1 ), isSeekAll, found ); }
 
             }
 
-        } else if ( typeof json === "object" ) {
+        } else {
 
+            // if the current matcher is a 'path' then evaluate against the fields of the json
             for( var prop in json ) {
 
-                var propPath = path.concat( prop );
-                var found = seek( json[ prop ], assessPath, isSeekAll, propPath )
-                if ( found ) {
+                var propValue = json[ prop ];
+                if ( prop === currentMatcher.path ) {
 
-                    if( !isSeekAll ) { return found; }
-                    acc = acc.concat( found );
+                    if ( remainingMatchers.length === 1 ) { found.push( propValue ); }
+                    else { seek( propValue, remainingMatchers.slice( 1 ), isSeekAll, found ); }
+
+                } else if ( remainingMatchers.length ) {
+
+                    seek( propValue, remainingMatchers, isSeekAll, found );
 
                 }
 
             }
 
         }
-        return acc;
 
     }
 
-    function assessPathForSteps( steps ) {
+    function seek( json, remainingMatchers, isSeekAll, found ) {
 
-        return function assessPath( nodePath ) {
+        if ( !isSeekAll && found.length ) { return; }
+        if ( isArray( json ) ) {
 
-            var bookmark = 0;
-            if ( !nodePath ) { return false; }
-            return steps.every( function( step ) {
+            for( var index = 0; index < json.length; index++ ) {
 
-                // find the next step starting from the bookmarked offset
-                bookmark = nodePath.indexOf( step, bookmark );
-                // the test passes if the step was found
-                return ~bookmark;
+                seek( json[ index ], remainingMatchers, isSeekAll, found );
 
-            } );
+            }
 
-        };
+        } else if ( typeof json === "object" ) {
+
+            seekInObject( json, remainingMatchers, isSeekAll, found );
+
+        }
+
+    }
+
+    function createMatchersFromPath( path ) {
+
+        var matchers = [];
+        var remainder = path;
+        // parse paths and clauses as separate objects from the path supplied
+        while ( remainder.length > 0 ) {
+
+            // try and extract an [@attribute=value] part from the remainder of the string
+            var where = /^\[(.+?)=(.+?)\](.*)/.exec( remainder );
+            if ( where ) {
+
+                matchers.push( { where : where[ 1 ].trim(), value: where[ 2 ].trim() } );
+                remainder = ( where[ 3 ] || "" ).trim();
+
+            } else {
+
+                // if no 'where' found, extract a path from the remainder of the string
+                var path = /^(.+?)( .*|\[.*)/.exec( remainder );
+                matchers.push( { path: expand( path && path[ 1 ] || remainder ) } );
+                remainder = path && path[ 2 ] && path[ 2 ].trim() || "";
+
+            }
+
+        }
+
+        return matchers;
 
     }
 
     // select json for this path
-    function select( json, path ) {
+    function select( json, path, isSelectAll ) {
 
-        var steps = path.split( " " ).map( expand );
-        if ( !steps.length ) { return { json: null }; }
-        var found = seek( json, assessPathForSteps( steps ) );
-        var lastStep = steps[ steps.length - 1 ];
+        var matchers = createMatchersFromPath( path.trim() );
+        if ( !matchers.length ) { return { json: null }; }
+
+        var lastStep = matchers[ matchers.length - 1 ].path;
+        var noMatch = isSelectAll ? [] : null;
+        var found = [];
+        seek( json, matchers, isSelectAll, found );
+        found = isSelectAll ? found : found[ 0 ];
         return {
 
             json: found,
-            isFinal: ( found === null ) || lastStep === "@value"
+            isFinal: ( found === noMatch ) || !!~[ "@id", "@index", "@value" ].indexOf( lastStep )
 
         };
 
     }
 
-    // select jsons for this path
-    function selectAll( json, path ) {
-
-        var steps = path.split( " " ).map( expand );
-        if ( !steps.length ) { return { json: [] }; }
-        var found = seek( json, assessPathForSteps( steps ), true );
-        var lastStep = steps[ steps.length - 1 ];
-        return {
-
-            json: found,
-            isFinal: ( found === [] ) || lastStep === "@value"
-
-        };
-
-    }
     function QueryNode( jsonData ) {
 
         this.json = function() { return jsonData; };
@@ -162,7 +170,7 @@
     QueryNode.prototype.queryAll = function( path ) {
 
         // select the json targetted by this path
-        var selections = selectAll( this.json(), path );
+        var selections = select( this.json(), path, true );
         // if the result is "final" (e.g. @value), return an array of the raw json
         return selections.isFinal ? selections.json : selections.json.map( buildQueryNode );
 
