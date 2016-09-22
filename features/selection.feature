@@ -58,4 +58,20 @@ Feature: select values using query syntax
         And then I query the result for all "@value"
         Then the result should be an array [ "Iain M Banks" ]
 
-    Scenario: Query for recursive properties
+    Scenario: Query for author nodes, by index
+        When I query for "ex:favouriteReads[@index=banks-exc]"
+        And I get the result's json
+        Then the json should match
+        | json                                                                                                                                             |
+        | {"@id":"http://www.isbnsearch.org/isbn/9780553575378","@index":"banks-exc","http://schema.org/author":[{"@value":"Iain M Banks"}],"http://schema.org/name":[{"@value":"Excession"}]} |
+
+    Scenario: Query for favourite reads by index
+        When I query for "ex:favouriteReads[@index=banks-exc]"
+        And I get the result's json
+        Then the json should match
+        | json                                                                                                                                             |
+        | {"@id":"http://www.isbnsearch.org/isbn/9780553575378","@index":"banks-exc","http://schema.org/author":[{"@value":"Iain M Banks"}],"http://schema.org/name":[{"@value":"Excession"}]} |
+
+    Scenario: Query for favourite reads by index, then get id
+        When I query for "ex:favouriteReads[@index=banks-exc] @id"
+        Then the result should be "http://www.isbnsearch.org/isbn/9780553575378"
