@@ -1,6 +1,7 @@
 var favouriteReads = JSON.stringify( require( "../data/person-favourite-reads.json" ) );
 var dataWithNesting = JSON.stringify( require( "../data/data-with-nesting.json" ) );
 var solitaryField = JSON.stringify( require( "../data/solitary.json" ) );
+var operations = JSON.stringify( require( "../data/operations.json" ) );
 var ldQuery = require( "../../src/ld-query" );
 var should = require( "should" );
 
@@ -28,6 +29,12 @@ module.exports = function() {
     this.Given(/^the sample data containing a solitary field is loaded$/, function () {
 
          this.data = JSON.parse( solitaryField );
+
+    } );
+
+    this.Given(/^the sample data containing operations is loaded$/, function () {
+
+         this.data = JSON.parse( operations );
 
     } );
 

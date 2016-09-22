@@ -47,13 +47,27 @@
 
         }, null );
 
+    function testObjectMatches( json, clause ) {
+
+        var val = json[ clause.where ];
+        if ( !val ) { return false; }
+        if ( isArray( val ) ) {
+
+            return !!~val.indexOf( clause.value );
+
+        }
+
+        return val === clause.value;
+
+    }
+
     function seekInObject( json, remainingMatchers, isSeekAll, found ) {
 
         var currentMatcher = remainingMatchers[ 0 ];
         if ( currentMatcher.where ) {
 
             // if the current matcher is a 'where' evaluate against the json itself
-            if ( json[ currentMatcher.where ] === currentMatcher.value ) {
+            if ( testObjectMatches( json, currentMatcher ) ) {
 
                 if ( remainingMatchers.length === 1 ) { found.push( json ); }
                 else { seek( json, remainingMatchers.slice( 1 ), isSeekAll, found ); }
@@ -113,7 +127,7 @@
             var where = /^\[(.+?)=(.+?)\](.*)/.exec( remainder );
             if ( where ) {
 
-                matchers.push( { where : where[ 1 ].trim(), value: where[ 2 ].trim() } );
+                matchers.push( { where : where[ 1 ].trim(), value: expand( where[ 2 ].trim() ) } );
                 remainder = ( where[ 3 ] || "" ).trim();
 
             } else {

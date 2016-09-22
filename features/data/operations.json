@@ -1,0 +1,40 @@
+{
+    "@type": [
+        "http://www.example.org#operationList"
+    ],
+    "http://www.w3.org/ns/hydra/core#operation": [
+        {
+            "@type": [
+                "http://www.example.org#deleteOperation",
+                "http://www.w3.org/ns/hydra/core#DeleteResourceOperation"
+            ],
+            "http://www.w3.org/ns/hydra/core#method": [
+                {
+                    "@value": "DELETE"
+                }
+            ],
+            "http://www.w3.org/ns/hydra/core#title": [
+                {
+                    "@value": "Delete the thing"
+                }
+            ]
+        },
+        {
+            "@type": [
+                "http://www.example.org#createOperation",
+                "http://www.w3.org/ns/hydra/core#CreateResourceOperation"
+            ],
+            "http://www.w3.org/ns/hydra/core#method": [
+                {
+                    "@value": "PUT"
+                }
+            ],
+            "http://www.w3.org/ns/hydra/core#title": [
+                {
+                    "@value": "Create the thing"
+                }
+            ]
+        }
+    ]
+
+}
