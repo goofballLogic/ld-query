@@ -10,7 +10,12 @@
 
     }
 
-}( function( dataContext, context ) {
+}( function( contextOrData, context ) {
+
+    // if only the first parameter is supplied, then use it as the context and return a factory function
+    // to create documents
+    var asFactory = !context;
+    context = context || contextOrData;
 
     // a fallback for missing Array.isArray
     var isArray = Array.isArray || function( arg ) {
@@ -20,6 +25,7 @@
     };
 
     // this builds a set of nested functions which are capable of expanding namespace alises to full prefixes
+    // if two parameters are provided then use the second parameter, otherwise use the first parameter.
     var expand = Object.keys( context )
 
         // for each alias (e.g. "so"), create a function to add to our chain
@@ -41,141 +47,199 @@
 
         }, null );
 
-    var hasChildren = function( entry ) {
+    function addAttributesToPath( json, path ) {
 
-        return typeof entry === "object" || isArray( entry );
+        if ( typeof json === "object" ) {
 
-    };
+            for( var prop in json ) {
 
-    // recursive seek method
-    function seek( json, remainingMatchers, isSeekAll, matches ) {
+                if ( prop.charAt( 0 ) === "@" ) { path[ prop ] = json[ prop ]; }
 
-        matches = matches || [];
-        var currentMatcher = remainingMatchers[ 0 ];
+            }
 
-        if ( isArray( json ) ) {
+        }
+
+    }
+
+    function seek( json, assessPath, isSeekAll, path ) {
+
+        var acc = isSeekAll ? [] : null;
+        path = path || [];
+        if ( !json ) { return acc; }
+        addAttributesToPath( json, path[ path.length - 1 ] );
+        if ( assessPath( path ) ) {
+
+            if ( !isSeekAll ) { return json; }
+            acc.push( json );
+
+
+        } else if ( isArray( json ) ) {
 
             for( var i = 0; i < json.length; i++ ) {
 
-                seek( json[ i ], remainingMatchers, isSeekAll, matches );
+                var found = seek( json[ i ], assessPath, isSeekAll, [].concat( path ) )
+                if ( found ) {
+
+                    if ( !isSeekAll ) { return found; }
+                    acc = acc.concat( found );
+
+                }
 
             }
 
         } else if ( typeof json === "object" ) {
 
-            if ( currentMatcher( null, json ) ) {
-
-                if ( remainingMatchers.length === 1 ) {
-
-                    matches.push( json );
-
-                } else {
-
-                    seek( json, remainingMatchers.slice( 1 ), isSeekAll, matches );
-
-                }
-
-            }
-
             for( var prop in json ) {
 
-                var propValue = json[ prop ];
-                if ( currentMatcher( prop, propValue ) ) {
+                var propPath = path.concat( { path: prop } );
+                var found = seek( json[ prop ], assessPath, isSeekAll, propPath )
+                if ( found ) {
 
-                    if ( remainingMatchers.length === 1 ) {
-
-                        matches.push( propValue );
-
-                    } else if ( hasChildren( propValue ) ) {
-
-                        seek( propValue, remainingMatchers.slice( 1 ), isSeekAll, matches);
-
-                    }
-
-                } else if ( hasChildren( propValue ) ) {
-
-                    seek( propValue, remainingMatchers, isSeekAll, matches );
+                    if( !isSeekAll ) { return found; }
+                    acc = acc.concat( found );
 
                 }
 
             }
 
         }
-
-        return isSeekAll ? matches : matches[ 0 ];
-
-    }
-
-    function pathMatcher( entry ) {
-
-        var expandedEntry = expand( entry );
-        return function( prop ) { return prop === expandedEntry; };
+        return acc;
 
     }
 
-    function whereMatcher( entry ) {
+    function testClauses( nodePathEntry, clauses ) {
 
-        var innerQueryParts = /^\[(.*)\]$/.exec( entry )[ 1 ].split( "=" );
-        var attribute = innerQueryParts[ 0 ].trim();
-        var value = ( innerQueryParts[ 1 ] || "" ).trim();
+        return clauses.every( function( clause ) {
 
-        return function( prop, propValue ) {
+            var entry = nodePathEntry[ clause.where ];
+            if ( isArray( entry ) ) {
 
-            var found = select( propValue, attribute + " @value", true ).json;
-            if ( !value ) { return found.length; }
-            return found.indexOf( value ) >= 0;
+                return ~entry.indexOf( clause.value );
 
-        };
-
-    }
-
-    function matchersForPathElements( pathElements ) {
-
-        return pathElements.map( function( element ) {
-
-            return element.indexOf( "[" ) === 0 ? whereMatcher( element ): pathMatcher( element );
+            }
+            return entry === clause.value;
 
         } );
 
     }
 
-    function splitPath( path ) {
+    function assessPathForSteps( steps ) {
 
-        var pieces = [];
-        var remainder = path;
-        while ( remainder.length > 0 ) {
+        return function assessPath( nodePath ) {
 
-            var where = /^(\[.+?\])(.*)/.exec( remainder );
-            if ( where ) {
+            var bookmark = 0;
+            var direct = false;
+            if ( !nodePath ) { return false; }
+            var pathParts = nodePath.map( function( nodePathItem ) { return nodePathItem.path; } );
+            return steps.every( function( step ) {
 
-                pieces.push( where[ 1 ] );
-                remainder = ( where[ 2 ] || "" ).trim();
+                if ( step.path ) {
 
-            } else {
+                    // find the next step starting from the bookmarked offset
+                    var found = pathParts.indexOf( step.path, bookmark );
+                    if ( direct ) {
 
-                var splitAt = remainder.search( / |\[/ );
-                pieces.push( splitAt < 0 ? remainder : remainder.substring( 0, splitAt ) );
-                remainder = splitAt < 0 ? "" : remainder.slice( splitAt ).trim();
+                        if ( bookmark + 1 !== found) { return false; }
+                        direct = false;
+                    }
+                    bookmark = found;
+                    if ( ~bookmark ) {
 
-            }
+                        // the test passes if the step was found
+                        // TODO this is only testing the first child; should pass for any child
+                        return step.clauses ? testClauses( nodePath[ bookmark ], step.clauses ) : true;
 
-        }
-        return pieces;
+                    }
+                    return false;
+
+                } else if ( step.direct ) {
+
+                    direct = true;
+                    return true;
+
+                }
+
+            } );
+
+        };
 
     }
 
-    function select( json, path, isSelectAll ) {
+    function extractStep( path, steps ) {
 
-        var noMatch = isSelectAll ? [] : null;
-        var pathElements = splitPath( path );
-        var matchers = matchersForPathElements( pathElements );
-        if ( !matchers.length ) { return { json: null }; }
-        var found = seek( json, matchers, isSelectAll );
-        var lastStep = pathElements[ pathElements.length - 1 ];
+        // try and extract an [@attribute=value] part from the start of the string
+        var wherePart = /^\[(.+?)=(.+?)\](.*)/.exec( path );
+        if ( wherePart ) {
+
+            steps.push( { where : wherePart[ 1 ].trim(), value: expand( wherePart[ 2 ].trim() ) } );
+            return ( wherePart[ 3 ] || "" ).trim();
+
+        }
+        // try and extract a > part from the start of the string
+        var directPart = /^>(.*)/.exec( path );
+        if ( directPart ) {
+
+            steps.push( { direct: true } );
+            return directPart[ 1 ].trim();
+
+        }
+        // try and extract a path from the start of the string
+        var pathPart = /^(.+?)( .*|\[.*)/.exec( path );
+        if ( pathPart ) {
+
+            steps.push( { path: expand( pathPart[ 1 ] ) } );
+            return pathPart[ 2 ].trim();
+
+        }
+        // assume whatever is left is a path
+        steps.push( { path: expand( path ) } );
+        return "";
+
+    }
+
+    function getSteps( path ) {
+
+        // cut the path up into separate pieces;
+        var separatedSteps = [];
+        var remainder = path;
+        while ( remainder.length > 0 ) {
+
+            remainder = extractStep( remainder, separatedSteps );
+
+        }
+        // process the extracted steps, to combine 'where' steps into a 'clauses' entry of path steps.
+        var steps = [ { path: "node" } ];
+        separatedSteps.forEach( function( step ) {
+
+            if ( step.where ) {
+
+                var lastStep = steps[ steps.length - 1 ];
+                var clauses = lastStep.clauses = lastStep.clauses || [];
+                clauses.push( step );
+
+            } else {
+
+                steps.push( step );
+
+            }
+
+        } );
+
+        return steps;
+
+    }
+
+    // select json for this path
+    function select( json, path, isSelectAll  ) {
+
+        var steps = getSteps( path );
+        if ( !steps.length ) { return { json: null }; }
+        var found = seek( json, assessPathForSteps( steps ), isSelectAll, [ { path: "node" } ] );
+        var lastStep = steps[ steps.length - 1 ].path;
         return {
 
             json: found,
-            isFinal: ( found === noMatch ) || lastStep === "@value"
+            isFinal: ( found === null ) || !!~[ "@id", "@index", "@value" ].indexOf( lastStep )
 
         };
 
@@ -205,6 +269,21 @@
         return selections.isFinal ? selections.json : selections.json.map( buildQueryNode );
 
     };
-    return new QueryNode( dataContext );
+
+    if ( asFactory ) {
+
+        // if one parameter was supplied, return the factory function
+        return function( dataContext ) {
+
+            return new QueryNode( dataContext );
+
+        }
+
+    } else {
+
+        // if two parameters were supplied, return the QueryNode directly
+        return new QueryNode( contextOrData );
+
+    }
 
 } ) );

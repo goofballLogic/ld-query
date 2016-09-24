@@ -5,7 +5,7 @@ Feature: select values using query syntax
 
   Background: Load sample data
     Given the sample data containing favourite reads is loaded
-    And I construct an ldQuery object using <context>
+    And I construct an ldQuery object using the loaded data and <context>
         | context                                                                                               |
         | { "so": "http://schema.org/", "foaf": "http://xmlns.com/foaf/0.1/", "ex": "http://www.example.org#" } |
 
@@ -47,56 +47,31 @@ Feature: select values using query syntax
       When I get the result's json
       Then the json should match
         | json                                                                                                                                             |
-        | [ { "http://schema.org/author": [ { "@value": "Iain M Banks" } ], "http://schema.org/name": [ { "@value": "Excession" } ], "@index": "banks-exc" }, { "http://schema.org/author": [ { "@value": "Iain M Banks" } ], "http://schema.org/name": [ { "@value": "The Player of Games" } ], "@index": "banks-pog" }, { "http://schema.org/author": [ { "@value": "Thomas Pynchon" } ], "http://schema.org/name": [ { "@value": "Gravity's Rainbow" } ], "http://www.example.org#note-to-self": [ { "@value": "Need to finish reading this" } ], "@index": "pynchon-gr" } ] |
+        | [{ "@id": "http://www.isbnsearch.org/isbn/9780553575378", "@index": "banks-exc", "http://schema.org/author": [{ "@value": "Iain M Banks" }], "http://schema.org/name": [{ "@value": "Excession" }] }, { "@id": "http://www.isbnsearch.org/isbn/9780143039945", "@index": "pynchon-gr", "http://schema.org/author": [{ "@value": "Thomas Pynchon" }], "http://schema.org/name": [{ "@value": "Gravity's Rainbow" }], "http://www.example.org#note-to-self": [{ "@value": "Need to finish reading this" }] }] |
 
     Scenario: Query for the author nodes
-      Given I query for all "ex:favouriteReads so:author"
-      Then the result should be an array of 3 QueryNodes
+        When I query for all "ex:favouriteReads so:author"
+        Then the result should be an array of 2 QueryNodes
 
     Scenario: Query for author nodes, then for names
-      Given I query for all "ex:favouriteReads so:author"
-      And then I query the result for all "@value"
-      Then the result should be an array [ "Iain M Banks" ]
+        When I query for all "ex:favouriteReads so:author"
+        And then I query the result for all "@value"
+        Then the result should be an array [ "Iain M Banks" ]
 
-    Scenario: Get the first result for a specific author
-      Given I query for "ex:favouriteReads[so:author=Iain M Banks]"
-      When I get the result's json
-      Then the json should match
+    Scenario: Query for author nodes, by index
+        When I query for "ex:favouriteReads[@index=banks-exc]"
+        And I get the result's json
+        Then the json should match
         | json                                                                                                                                             |
-        | { "http://schema.org/author": [ { "@value": "Iain M Banks" } ], "http://schema.org/name": [ { "@value": "Excession" } ], "@index": "banks-exc" } |
+        | {"@id":"http://www.isbnsearch.org/isbn/9780553575378","@index":"banks-exc","http://schema.org/author":[{"@value":"Iain M Banks"}],"http://schema.org/name":[{"@value":"Excession"}]} |
 
-    Scenario: Query for favourite reads for a specific author
-      Given I query for all "ex:favouriteReads[so:author=Iain M Banks]"
-      Then the result should be an array of 2 QueryNodes
-
-    Scenario: Query for favourite reads for a specific author
-      Given I query for all "ex:favouriteReads[so:author=Iain M Banks]"
-      When I get the json for each result
-      Then the the first json should match
+    Scenario: Query for favourite reads by index
+        When I query for "ex:favouriteReads[@index=banks-exc]"
+        And I get the result's json
+        Then the json should match
         | json                                                                                                                                             |
-        | { "http://schema.org/author": [ { "@value": "Iain M Banks" } ], "http://schema.org/name": [ { "@value": "Excession" } ], "@index": "banks-exc" } |
-      And the second json should match
-        | json                                                                                                                                             |
-        | { "http://schema.org/author": [ { "@value": "Iain M Banks" } ], "http://schema.org/name": [ { "@value": "The Player of Games" } ], "@index": "banks-pog" } |
+        | {"@id":"http://www.isbnsearch.org/isbn/9780553575378","@index":"banks-exc","http://schema.org/author":[{"@value":"Iain M Banks"}],"http://schema.org/name":[{"@value":"Excession"}]} |
 
-    Scenario: Query for favourite reads for a specific author, then get the title
-      Given I query for all "ex:favouriteReads[so:author=Iain M Banks] so:name @value"
-      Then the result should be an array [ "Excession", "The Player of Games" ]
-
-    Scenario: Query for favourite reads for a specific author and title
-      Given I query for all "ex:favouriteReads[so:author=Iain M Banks][so:name=Excession]"
-      Then the result should be an array of 1 QueryNodes
-
-    Scenario: Query for favourite reads for a specific author and title, then get the json
-      Given I query for all "ex:favouriteReads[so:author=Iain M Banks][so:name=Excession]"
-      When I get the json for each result
-      Then the the first json should match
-        | json                                                                                                                                             |
-        | { "http://schema.org/author": [ { "@value": "Iain M Banks" } ], "http://schema.org/name": [ { "@value": "Excession" } ], "@index": "banks-exc" } |
-
-    Scenario: Query for favourite reads for a specific author and title, then get the index
-      Given I query for "ex:favouriteReads[so:author=Iain M Banks][so:name=Excession] @index"
-      When I get the result's json
-      Then the json should match
-        | json        |
-        | "banks-exc" |
+    Scenario: Query for favourite reads by index, then get id
+        When I query for "ex:favouriteReads[@index=banks-exc] @id"
+        Then the result should be "http://www.isbnsearch.org/isbn/9780553575378"

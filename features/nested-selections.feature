@@ -5,7 +5,7 @@ Feature: select values using query syntax against documents with recursive prope
 
   Background: Load sample data
     Given the sample data containing recursive constructs is loaded
-    And I construct an ldQuery object using <context>
+    And I construct an ldQuery object using the loaded data and <context>
         | context                                                                                               |
         | { "ex": "http://www.example.org#" } |
 

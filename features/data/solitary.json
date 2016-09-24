@@ -1,0 +1,14 @@
+{
+
+    "@type": [
+
+        "http://www.example.org#solitary"
+
+    ],
+    "http://www.example.org#field": [ {
+
+        "@value": "All by myself"
+
+    } ]
+
+}

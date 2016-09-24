@@ -1,5 +1,7 @@
 var favouriteReads = JSON.stringify( require( "../data/person-favourite-reads.json" ) );
 var dataWithNesting = JSON.stringify( require( "../data/data-with-nesting.json" ) );
+var solitaryField = JSON.stringify( require( "../data/solitary.json" ) );
+var operations = JSON.stringify( require( "../data/operations.json" ) );
 var ldQuery = require( "../../src/ld-query" );
 var should = require( "should" );
 
@@ -24,10 +26,47 @@ module.exports = function() {
 
     } );
 
-    this.Given(/^I construct an ldQuery object using <context>$/, function (table) {
+    this.Given(/^the sample data containing a solitary field is loaded$/, function () {
+
+         this.data = JSON.parse( solitaryField );
+
+    } );
+
+    this.Given(/^the sample data containing operations is loaded$/, function () {
+
+         this.data = JSON.parse( operations );
+
+    } );
+
+    this.Given(/^I construct an ldQuery object using the loaded data and <context>$/, function (table) {
 
         this.context = JSON.parse( table.hashes()[ 0 ].context );
         this.query = ldQuery( this.data, this.context );
+
+    } );
+
+    this.Given(/^I construct an ldQuery object using <context> only$/, function (table) {
+
+        this.context = JSON.parse( table.hashes()[ 0 ].context );
+        this.queryFactory = ldQuery( this.context );
+
+    } );
+
+    this.Then(/^I should get a query factory object$/, function () {
+
+        // can only estimate this - check it is a function and not a QueryNode
+        should.exist( this.queryFactory, "No query factory object found" );
+        var isFunction = typeof this.queryFactory === "function";
+        isFunction.should.be.true( "Query factory is not a function" );
+
+        should.not.exist( this.queryFactory.query, "Unexpected query method found" );
+        should.not.exist( this.queryFactory.queryAll, "Unexpected queryAll method found" );
+
+    } );
+
+    this.Given(/^I pass the loaded data to the query factory$/, function () {
+
+        this.query = this.queryFactory( this.data );
 
     } );
 
@@ -47,6 +86,14 @@ module.exports = function() {
         }
         var querySite = [].concat( this.result || [] )[ 0 ];
         this.result = isAll ? querySite.queryAll( selector ) : querySite.query( selector );
+
+    } );
+
+    this.Then(/^I should obtain a QueryNode object$/, function() {
+
+        should.exist( this.query, "No query object found" );
+        should.exist( this.query.query, "No query method found" );
+        should.exist( this.query.queryAll, "No queryAll method found" );
 
     } );
 
@@ -103,28 +150,6 @@ module.exports = function() {
         var expected = JSON.stringify( JSON.parse( csv ) );
         var actual = JSON.stringify( this.result );
         actual.should.eql( expected );
-
-    } );
-
-    this.When(/^I get the json for each result$/, function () {
-
-        this.json = this.result.map( function( queryNode ) { return queryNode.json() } );
-
-    } );
-
-    this.Then(/^the the first json should match$/, function ( table ) {
-
-        var expected = JSON.stringify( JSON.parse( table.hashes()[ 0 ].json ) );
-        var actual = JSON.stringify( this.json[ 0 ] );
-        actual.should.match( expected );
-
-    } );
-
-    this.Then(/^the second json should match$/, function ( table ) {
-
-        var expected = JSON.stringify( JSON.parse( table.hashes()[ 0 ].json ) );
-        var actual = JSON.stringify( this.json[ 1 ] );
-        actual.should.match( expected );
 
     } );
 
