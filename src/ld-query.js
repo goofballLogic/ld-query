@@ -65,7 +65,7 @@
     function preparePath( path ) {
 
         var pathClone = [].concat( path );
-        pathClone[ pathClone.length - 1 ] = { path: pathClone[ pathClone.length - 1 ].path };
+        pathClone[ 0 ] = { path: pathClone[ 0 ].path };
         return pathClone;
 
     }
@@ -75,7 +75,7 @@
         var acc = isSeekAll ? [] : null;
         path = path || [];
         if ( !json ) { return acc; }
-        addObjectAttributesToPath( json, path[ path.length - 1 ] );
+        addObjectAttributesToPath( json, path[ 0 ] );
 
         if ( assessPath( path ) ) {
 
@@ -86,7 +86,7 @@
 
             for( var i = 0; i < json.length; i++ ) {
 
-                // when recursing through an array, make sure the last path entry is cloned
+                // when recursing through an array, make sure the most recent path entry is cloned
                 // since it is mutated by 'addObjectAttributesToPath'
                 var found = seek( json[ i ], assessPath, isSeekAll, preparePath( path ) )
                 if ( found ) {
@@ -102,7 +102,7 @@
 
             for( var prop in json ) {
 
-                var propPath = path.concat( { path: prop } );
+                var propPath = [ { path: prop } ].concat( path );
                 var found = seek( json[ prop ], assessPath, isSeekAll, propPath )
                 if ( found ) {
 
@@ -238,12 +238,13 @@
 
             if ( step.key ) {
 
-                var lastStep = steps[ steps.length - 1 ];
+                var lastStep = steps[ 0 ];
                 lastStep[ step.key ] = ( lastStep[ step.key ] || [] ).concat( step.value );
 
             } else {
 
-                steps.push( step );
+                // store steps for right-to-left matching
+                steps.unshift( step );
 
             }
 
@@ -259,7 +260,7 @@
         var steps = getSteps( path );
         if ( !steps.length ) { return { json: null }; }
         var found = seek( json, assessPathForSteps( steps ), isSeekAll, [ { path: "node" } ] );
-        var lastStep = steps[ steps.length - 1 ].path;
+        var lastStep = steps[ 0 ].path;
         return {
 
             json: found,
