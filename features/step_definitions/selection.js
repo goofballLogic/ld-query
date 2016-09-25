@@ -2,6 +2,7 @@ var favouriteReads = JSON.stringify( require( "../data/person-favourite-reads.js
 var dataWithNesting = JSON.stringify( require( "../data/data-with-nesting.json" ) );
 var solitaryField = JSON.stringify( require( "../data/solitary.json" ) );
 var operations = JSON.stringify( require( "../data/operations.json" ) );
+var selectionTests = JSON.stringify( require( "../data/selection-tests.json" ) );
 var ldQuery = require( "../../src/ld-query" );
 var should = require( "should" );
 
@@ -35,6 +36,12 @@ module.exports = function() {
     this.Given(/^the sample data containing operations is loaded$/, function () {
 
          this.data = JSON.parse( operations );
+
+    } );
+
+    this.Given(/^the sample data containing selection tests is loaded$/, function () {
+
+         this.data = JSON.parse( selectionTests );
 
     } );
 
@@ -108,6 +115,12 @@ module.exports = function() {
     this.Then(/^the result should be "([^"]*)"$/, function( expected ) {
 
         this.result.should.eql( expected );
+
+    } );
+
+    this.Then(/^there should be no result$/, function() {
+
+        should.not.exist( this.result );
 
     } );
 

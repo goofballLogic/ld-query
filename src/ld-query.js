@@ -47,17 +47,26 @@
 
         }, null );
 
-    function addAttributesToPath( json, path ) {
+    // given a nodePath 'path' entry, store any values of the object starting with an @ against it
+    function addObjectAttributesToPath( json, path ) {
 
         if ( typeof json === "object" ) {
 
             for( var prop in json ) {
 
-                if ( prop.charAt( 0 ) === "@" ) { path[ prop ] = json[ prop ]; }
+                if ( prop.charAt( 0 ) === "@" ) { path[ prop ] = ( path[ prop ] || [] ).concat( json[ prop ] ); }
 
             }
 
         }
+
+    }
+
+    function preparePath( path ) {
+
+        var pathClone = [].concat( path );
+        pathClone[ pathClone.length - 1 ] = { path: pathClone[ pathClone.length - 1 ].path };
+        return pathClone;
 
     }
 
@@ -66,18 +75,20 @@
         var acc = isSeekAll ? [] : null;
         path = path || [];
         if ( !json ) { return acc; }
-        addAttributesToPath( json, path[ path.length - 1 ] );
+        addObjectAttributesToPath( json, path[ path.length - 1 ] );
+
         if ( assessPath( path ) ) {
 
             if ( !isSeekAll ) { return json; }
             acc.push( json );
 
-
         } else if ( isArray( json ) ) {
 
             for( var i = 0; i < json.length; i++ ) {
 
-                var found = seek( json[ i ], assessPath, isSeekAll, [].concat( path ) )
+                // when recursing through an array, make sure the last path entry is cloned
+                // since it is mutated by 'addObjectAttributesToPath'
+                var found = seek( json[ i ], assessPath, isSeekAll, preparePath( path ) )
                 if ( found ) {
 
                     if ( !isSeekAll ) { return found; }
@@ -107,19 +118,38 @@
 
     }
 
-    function testClauses( nodePathEntry, clauses ) {
+    function testPathKey( nodePathEntry, stepKey, stepValue ) {
 
-        return clauses.every( function( clause ) {
+        var pathValue = nodePathEntry[ stepKey ];
+        if ( !pathValue ) { return false; }
+        if ( isArray( stepValue ) ) {
 
-            var entry = nodePathEntry[ clause.where ];
-            if ( isArray( entry ) ) {
+            return stepValue.every( function( value ) {
 
-                return ~entry.indexOf( clause.value );
+                return ~[].concat( pathValue ).indexOf( value );
 
-            }
-            return entry === clause.value;
+            } );
 
-        } );
+        }
+        return pathValue === stepValue;
+
+    }
+
+    function findNextPathMatch( nodePath, start, step ) {
+
+        // start at the previous bookmarked position in the nodePath
+        for ( var i = start; i < nodePath.length; i++ ) {
+
+            // check whether all keys in step ( path & @attributes ) match
+            var test = Object.keys( step ).every( function( key ) {
+
+                return testPathKey( nodePath[ i ], key, step[ key ] );
+
+            } );
+            if ( test ) { return i; }
+
+        }
+        return -1;
 
     }
 
@@ -130,27 +160,22 @@
             var bookmark = 0;
             var direct = false;
             if ( !nodePath ) { return false; }
-            var pathParts = nodePath.map( function( nodePathItem ) { return nodePathItem.path; } );
             return steps.every( function( step ) {
 
                 if ( step.path ) {
 
                     // find the next step starting from the bookmarked offset
-                    var found = pathParts.indexOf( step.path, bookmark );
+                    var found = findNextPathMatch( nodePath, bookmark, step );
+                    // if the direct flag is set, only pass if the found is beside the last bookmark...
                     if ( direct ) {
 
                         if ( bookmark + 1 !== found) { return false; }
                         direct = false;
+
                     }
                     bookmark = found;
-                    if ( ~bookmark ) {
-
-                        // the test passes if the step was found
-                        // TODO this is only testing the first child; should pass for any child
-                        return step.clauses ? testClauses( nodePath[ bookmark ], step.clauses ) : true;
-
-                    }
-                    return false;
+                    // ...otherwise any match is fine
+                    return ~bookmark;
 
                 } else if ( step.direct ) {
 
@@ -167,11 +192,11 @@
 
     function extractStep( path, steps ) {
 
-        // try and extract an [@attribute=value] part from the start of the string
+        // try and extract a 'where' [@attribute=value] part from the start of the string
         var wherePart = /^\[(.+?)=(.+?)\](.*)/.exec( path );
         if ( wherePart ) {
 
-            steps.push( { where : wherePart[ 1 ].trim(), value: expand( wherePart[ 2 ].trim() ) } );
+            steps.push( { key : wherePart[ 1 ].trim(), value: expand( wherePart[ 2 ].trim() ) } );
             return ( wherePart[ 3 ] || "" ).trim();
 
         }
@@ -207,15 +232,14 @@
             remainder = extractStep( remainder, separatedSteps );
 
         }
-        // process the extracted steps, to combine 'where' steps into a 'clauses' entry of path steps.
+        // process the extracted steps, to combine 'where' steps into keys on path steps.
         var steps = [ { path: "node" } ];
         separatedSteps.forEach( function( step ) {
 
-            if ( step.where ) {
+            if ( step.key ) {
 
                 var lastStep = steps[ steps.length - 1 ];
-                var clauses = lastStep.clauses = lastStep.clauses || [];
-                clauses.push( step );
+                lastStep[ step.key ] = ( lastStep[ step.key ] || [] ).concat( step.value );
 
             } else {
 
@@ -230,11 +254,11 @@
     }
 
     // select json for this path
-    function select( json, path, isSelectAll  ) {
+    function select( json, path, isSeekAll ) {
 
         var steps = getSteps( path );
         if ( !steps.length ) { return { json: null }; }
-        var found = seek( json, assessPathForSteps( steps ), isSelectAll, [ { path: "node" } ] );
+        var found = seek( json, assessPathForSteps( steps ), isSeekAll, [ { path: "node" } ] );
         var lastStep = steps[ steps.length - 1 ].path;
         return {
 
