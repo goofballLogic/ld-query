@@ -168,7 +168,7 @@
         return function assessPath( nodePath ) {
 
             var bookmark = 0;
-            var direct = false;
+            var directChild = false;
             if ( !nodePath ) { return false; }
             return steps.every( function( step ) {
 
@@ -176,20 +176,20 @@
 
                     // find the next step starting from the bookmarked offset
                     var found = findNextPathMatch( nodePath, bookmark, step );
-                    // if the direct flag is set, only pass if the found is beside the last bookmark...
-                    if ( direct ) {
+                    // if the directChild flag is set, only pass if the found is beside the last bookmark...
+                    if ( directChild ) {
 
                         if ( bookmark + 1 !== found) { return false; }
-                        direct = false;
+                        directChild = false;
 
                     }
                     bookmark = found;
                     // ...otherwise any match is fine
                     return ~bookmark;
 
-                } else if ( step.direct ) {
+                } else if ( step.directChild ) {
 
-                    direct = true;
+                    directChild = true;
                     return true;
 
                 }
@@ -211,11 +211,11 @@
 
         }
         // try and extract a > part from the start of the string
-        var directPart = /^>(.*)/.exec( path );
-        if ( directPart ) {
+        var directChildPart = /^>(.*)/.exec( path );
+        if ( directChildPart ) {
 
-            steps.push( { direct: true } );
-            return directPart[ 1 ].trim();
+            steps.push( { directChild: true } );
+            return directChildPart[ 1 ].trim();
 
         }
         // try and extract a path from the start of the string
