@@ -39,7 +39,8 @@ An example of a JSON-LD document:
     }
   },
   "accountName": "goofballLogic",
-  "firstName": "Andrew"
+  "firstName": "Andrew",
+  "name": "Andrew Goofball"
 }
 ```
 
@@ -52,7 +53,7 @@ An example of a JSON-LD document:
 
 This library aims to assist with querying json-ld documents **in their expanded form**. It is worth noting that although the JSON-LD expansion algorithm is defined in the [JSON-LD Processing Algorithms and API recommendation], there's no implementation of the expansion algorithm in this library.
 
-To use this library, your data needs to be in exapnded form. You can use existing implementations of the expansion API to achieve this. For example, [jsonld.js] is a fairly mature implementation of the standard. 
+To use this library, your data needs to be in exapnded form. You can use existing implementations of the expansion API to achieve this. For example, [jsonld.js] is a fairly mature implementation of the standard.
 
 An example of an expanded JSON-LD document:
 
@@ -110,6 +111,11 @@ An example of an expanded JSON-LD document:
     "http://xmlns.com/foaf/0.1/firstName": [
       {
         "@value": "Andrew"
+      }
+    ],
+    "http://schema.org/name": [
+      {
+        "@value": "Andrew Goofball"
       }
     ]
   }
@@ -179,10 +185,14 @@ doc.query("so:somepropertynotinyourdocument @value")              // null
 
 doc.queryAll("so:somepropertynotinyourdocument @value")           // []
 
-doc.query("ex:favouriteReads[@index=pynchon_gp] so:name @value")  // "Gravity's Rainbox" 
+doc.query("ex:favouriteReads[@index=pynchon_gp] so:name @value")  // "Gravity's Rainbox"
 
 doc.queryAll("ex:favouriteReads @index")                          // [ "banks-exc", "pynchon-gr" ]
 doc.query("ex:favouriteReads @id")                                // [ "http://www.isbnsearch.org/isbn/9780553575378" ]
+
+doc.queryAll("so:name @value")                                    // [ "Excession", "Gravity's Rainbox", "Andrew Goofball" ]
+doc.queryAll("> so:name @value")                                  // [ "Andrew Goofball" ]
+doc.queryAll("ex:favouriteReads > so:name @value")                // [ "Excession", "Gravity's Rainbox" ]
 ```
 
 [W3C JSON-LD recommendation]: https://www.w3.org/TR/json-ld/
