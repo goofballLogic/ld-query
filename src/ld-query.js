@@ -276,7 +276,8 @@
         return {
 
             json: found,
-            isFinal: ( found === null ) || !!~[ "@id", "@index", "@value" ].indexOf( lastStep )
+            isFinal: ( isSeekAll ? found.length === 0 : found === null ) ||
+                !!~[ "@id", "@index", "@value" ].indexOf( lastStep )
 
         };
 

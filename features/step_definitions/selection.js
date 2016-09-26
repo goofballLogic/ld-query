@@ -166,4 +166,12 @@ module.exports = function() {
 
     } );
 
+    this.Then(/^the result should be an empty array$/, function () {
+
+        var resultIsArray = isArray( this.result );
+        resultIsArray.should.be.true();
+        this.result.length.should.eql( 0 );
+
+    } );
+
 };
