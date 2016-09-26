@@ -62,59 +62,69 @@
 
     }
 
-    function preparePath( path ) {
+    function seekInObject( obj, assessPath, isSeekAll, path ) {
 
-        var pathClone = [].concat( path );
-        pathClone[ 0 ] = { path: pathClone[ 0 ].path };
-        return pathClone;
+        var acc = isSeekAll ? [] : null;
+        for( var prop in obj ) {
+
+            var propPath = [ { path: prop } ].concat( path );
+            var found = seek( obj[ prop ], assessPath, isSeekAll, propPath );
+            if ( found ) {
+
+                if( !isSeekAll ) { return found; }
+                acc = acc.concat( found );
+
+            }
+
+        }
+        return acc;
+
+    }
+
+    function seekInArray( array, assessPath, isSeekAll, path ) {
+
+        var acc = isSeekAll ? [] : null;
+        for( var i = 0; i < array.length; i++ ) {
+
+            // when recursing through an array, make sure the most recent path entry is cloned
+            // since it is mutated by 'addObjectAttributesToPath'
+            var pathClone = [].concat( path );
+            pathClone[ 0 ] = { path: pathClone[ 0 ].path };
+            var found = seek( array[ i ], assessPath, isSeekAll, pathClone );
+            if ( found ) {
+
+                if ( !isSeekAll ) { return found; }
+                acc = acc.concat( found );
+
+            }
+
+        }
+        return acc;
 
     }
 
     function seek( json, assessPath, isSeekAll, path ) {
 
-        var acc = isSeekAll ? [] : null;
+        var found;
         path = path || [];
         if ( !json ) { return acc; }
         addObjectAttributesToPath( json, path[ 0 ] );
 
         if ( assessPath( path ) ) {
 
-            if ( !isSeekAll ) { return json; }
-            acc.push( json );
+            found = json;
 
         } else if ( isArray( json ) ) {
 
-            for( var i = 0; i < json.length; i++ ) {
-
-                // when recursing through an array, make sure the most recent path entry is cloned
-                // since it is mutated by 'addObjectAttributesToPath'
-                var found = seek( json[ i ], assessPath, isSeekAll, preparePath( path ) )
-                if ( found ) {
-
-                    if ( !isSeekAll ) { return found; }
-                    acc = acc.concat( found );
-
-                }
-
-            }
+            found = seekInArray( json, assessPath, isSeekAll, path );
 
         } else if ( typeof json === "object" ) {
 
-            for( var prop in json ) {
-
-                var propPath = [ { path: prop } ].concat( path );
-                var found = seek( json[ prop ], assessPath, isSeekAll, propPath )
-                if ( found ) {
-
-                    if( !isSeekAll ) { return found; }
-                    acc = acc.concat( found );
-
-                }
-
-            }
+            found = seekInObject( json, assessPath, isSeekAll, path );
 
         }
-        return acc;
+
+        return found;
 
     }
 
@@ -209,7 +219,7 @@
 
         }
         // try and extract a path from the start of the string
-        var pathPart = /^(.+?)( .*|\[.*)/.exec( path );
+        var pathPart = /^(.+?)( .*|\[.*|>.*)/.exec( path );
         if ( pathPart ) {
 
             steps.push( { path: expand( pathPart[ 1 ] ) } );
@@ -232,8 +242,10 @@
             remainder = extractStep( remainder, separatedSteps );
 
         }
+
+        // create an path alias '#document' to represent the root of the current QueryNode json
+        var steps = [ { path: "#document" } ];
         // process the extracted steps, to combine 'where' steps into keys on path steps.
-        var steps = [ { path: "node" } ];
         separatedSteps.forEach( function( step ) {
 
             if ( step.key ) {
@@ -259,7 +271,7 @@
 
         var steps = getSteps( path );
         if ( !steps.length ) { return { json: null }; }
-        var found = seek( json, assessPathForSteps( steps ), isSeekAll, [ { path: "node" } ] );
+        var found = seek( json, assessPathForSteps( steps ), isSeekAll, [ { path: "#document" } ] );
         var lastStep = steps[ 0 ].path;
         return {
 
