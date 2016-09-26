@@ -1,7 +1,7 @@
 Feature: select values by type using query syntax
   As a developer working with JSON-LD
-  I want to be able to use familiar syntax to query a JSON-LD document
-  So that I don't need to manually parse the expanded JSON tree
+  I want to be able to find query the @type attribute that may be an array
+  So that I can find elements entries match a specific need
 
   Background: Load sample data
     Given the sample data containing operations is loaded
