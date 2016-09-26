@@ -105,9 +105,9 @@
 
     function seek( json, assessPath, isSeekAll, path ) {
 
-        var found;
+        var found = isSeekAll ? [] : null;
         path = path || [];
-        if ( !json ) { return acc; }
+        if ( !json ) { return found; }
         addObjectAttributesToPath( json, path[ 0 ] );
 
         if ( assessPath( path ) ) {
