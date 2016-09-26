@@ -1,0 +1,58 @@
+{
+    "@type": [
+        "http://www.example.org#unrealistic-data-with-no-decent-analogy"
+    ],
+    "http://www.example.org#type": [{
+        "@id": "http://www.example.org#type1",
+        "@index": "index1",
+        "@type": [
+            "http://www.example.org#type-child",
+            "one"
+        ],
+        "http://www.example.org#type": [{
+            "@id": "http://www.example.org#type2",
+            "@index": "index2",
+            "@type": [
+                "http://www.example.org#type-child",
+                "two"
+            ],
+            "http://www.example.org#grabThis": [{
+                "@value": "One-Two"
+            }]
+        }],
+        "http://www.example.org#grabThis": [{
+            "@value": "One"
+        }]
+    }, {
+        "@id": "http://www.example.org#type3",
+        "@index": "index3",
+        "@type": [
+            "http://www.example.org#type-child",
+            "three"
+        ],
+        "http://www.example.org#type": [{
+            "@id": "http://www.example.org#type4",
+            "@type": [
+                "http://www.example.org#type-child",
+                "four-noindex"
+            ],
+            "http://www.example.org#type": [{
+                "@id": "http://www.example.org#type4",
+                "@index": "index4",
+                "@type": [
+                    "http://www.example.org#type-child",
+                    "four"
+                ],
+                "http://www.example.org#grabThis": [{
+                    "@value": "Three-Four"
+                }]
+            }],
+            "http://www.example.org#grabThis": [{
+                "@value": "Three-NoIndex"
+            }]
+        }],
+        "http://www.example.org#grabThis": [{
+            "@value": "Three"
+        }]
+    }]
+}

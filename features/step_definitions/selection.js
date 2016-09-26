@@ -2,6 +2,7 @@ var favouriteReads = JSON.stringify( require( "../data/person-favourite-reads.js
 var dataWithNesting = JSON.stringify( require( "../data/data-with-nesting.json" ) );
 var solitaryField = JSON.stringify( require( "../data/solitary.json" ) );
 var operations = JSON.stringify( require( "../data/operations.json" ) );
+var selectionTests = JSON.stringify( require( "../data/selection-tests.json" ) );
 var ldQuery = require( "../../src/ld-query" );
 var should = require( "should" );
 
@@ -35,6 +36,12 @@ module.exports = function() {
     this.Given(/^the sample data containing operations is loaded$/, function () {
 
          this.data = JSON.parse( operations );
+
+    } );
+
+    this.Given(/^the sample data containing selection tests is loaded$/, function () {
+
+         this.data = JSON.parse( selectionTests );
 
     } );
 
@@ -111,6 +118,12 @@ module.exports = function() {
 
     } );
 
+    this.Then(/^there should be no result$/, function() {
+
+        should.not.exist( this.result );
+
+    } );
+
     this.When(/^I query the result for "([^"]*)"$/, function( selector ) {
 
         this.result = this.result.query( selector );
@@ -150,6 +163,14 @@ module.exports = function() {
         var expected = JSON.stringify( JSON.parse( csv ) );
         var actual = JSON.stringify( this.result );
         actual.should.eql( expected );
+
+    } );
+
+    this.Then(/^the result should be an empty array$/, function () {
+
+        var resultIsArray = isArray( this.result );
+        resultIsArray.should.be.true();
+        this.result.length.should.eql( 0 );
 
     } );
 

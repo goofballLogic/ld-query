@@ -75,3 +75,11 @@ Feature: select values using query syntax
     Scenario: Query for favourite reads by index, then get id
         When I query for "ex:favouriteReads[@index=banks-exc] @id"
         Then the result should be "http://www.isbnsearch.org/isbn/9780553575378"
+
+    Scenario: Query for a path that does not exist
+      When I query for "alice:bob"
+      Then there should be no result
+
+    Scenario: Query all for a path that does not exist
+      When I query for all "alice:bob"
+      Then the result should be an empty array
