@@ -54,5 +54,18 @@
         "http://www.example.org#grabThis": [{
             "@value": "Three"
         }]
+    }, {
+        
+        "http://www.example.org#parent": [{
+            "@index": "index2",
+            "@value": "I am parent",
+            "http://www.example.org#child": [{
+                "@index": "index1",
+                "@value": "I am child 1"
+            }, {
+                "@index": "index2",
+                "@value": "I am child 2"
+            }]
+        }]
     }]
 }
