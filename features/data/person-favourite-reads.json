@@ -32,5 +32,8 @@
     }],
     "http://xmlns.com/foaf/0.1/firstName": [{
         "@value": "Andrew"
+    }],
+    "http://schema.org/name": [{
+        "@value": "Andrew Goofball"
     }]
 }
