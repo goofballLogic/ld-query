@@ -32,3 +32,15 @@ Feature: select values by type using multiple attributes
     Scenario: Query by two values of the same attribute
         When I query for "ex:type[@type=ex:type-child][@type=four-noindex] > ex:grabThis @value"
         Then the result should be "Three-NoIndex"
+
+    Scenario: Query for attributes with whitespace inside attributes
+        When I query for "ex:type[ @id=ex:type1 ][ @index=index1 ] ex:grabThis @value"
+        Then the result should be "One-Two"
+    
+    Scenario: Query for attributes with whitespace between operator and values
+        When I query for "ex:type[@id = ex:type1][@index=index1] ex:grabThis @value"
+        Then the result should be "One-Two"
+
+    Scenario: Attribute selectors should work on their own
+        When I query for "ex:parent [@index=index2] @value"
+        Then the result should be "I am child 2"

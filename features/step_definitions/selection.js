@@ -114,6 +114,7 @@ module.exports = function() {
 
     this.Then(/^the result should be "([^"]*)"$/, function( expected ) {
 
+        should.exist( this.result, "No result!" );
         this.result.should.eql( expected );
 
     } );
