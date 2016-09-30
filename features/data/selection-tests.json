@@ -55,7 +55,6 @@
             "@value": "Three"
         }]
     }, {
-        
         "http://www.example.org#parent": [{
             "@index": "index2",
             "@value": "I am parent",
