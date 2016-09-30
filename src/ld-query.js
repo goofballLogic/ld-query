@@ -147,7 +147,6 @@
 
     function findNextPathMatch( nodePath, start, step ) {
 
-        // start at the previous bookmarked position in the nodePath
         for ( var i = start; i < nodePath.length; i++ ) {
 
             // check whether all keys in step ( path & @attributes ) match
@@ -167,15 +166,20 @@
 
         return function assessPath( nodePath ) {
 
-            var bookmark = 0;
+            var bookmark = -1;
             var directChild = false;
             if ( !nodePath ) { return false; }
             return steps.every( function( step ) {
 
-                if ( step.path ) {
+                if ( step.directChild ) {
 
-                    // find the next step starting from the bookmarked offset
-                    var found = findNextPathMatch( nodePath, bookmark, step );
+                    directChild = true;
+                    return true;
+
+                } else {
+
+                    // find the next step starting after the bookmarked offset
+                    var found = findNextPathMatch( nodePath, bookmark + 1, step );
                     // if the directChild flag is set, only pass if the found is beside the last bookmark...
                     if ( directChild ) {
 
@@ -186,11 +190,6 @@
                     bookmark = found;
                     // ...otherwise any match is fine
                     return ~bookmark;
-
-                } else if ( step.directChild ) {
-
-                    directChild = true;
-                    return true;
 
                 }
 
@@ -203,31 +202,32 @@
     function extractStep( path, steps ) {
 
         // try and extract a 'where' [@attribute=value] part from the start of the string
-        var wherePart = /^\[(.+?)=(.+?)\](.*)/.exec( path );
+        var wherePart = /^(\s*\*?)\[(.+?)=(.+?)\](.*)/.exec( path );
         if ( wherePart ) {
 
-            steps.push( { key : wherePart[ 1 ].trim(), value: expand( wherePart[ 2 ].trim() ) } );
-            return ( wherePart[ 3 ] || "" ).trim();
+            if ( wherePart[ 1 ] ) { steps.push( { } ); }
+            steps.push( { key : wherePart[ 2 ].trim(), value: expand( wherePart[ 3 ].trim() ) } );
+            return ( wherePart[ 4 ] || "" );
 
         }
         // try and extract a > part from the start of the string
-        var directChildPart = /^>(.*)/.exec( path );
+        var directChildPart = /^\s*>\s*(.*)/.exec( path );
         if ( directChildPart ) {
 
             steps.push( { directChild: true } );
-            return directChildPart[ 1 ].trim();
+            return directChildPart[ 1 ];
 
         }
         // try and extract a path from the start of the string
         var pathPart = /^(.+?)( .*|\[.*|>.*)/.exec( path );
         if ( pathPart ) {
 
-            steps.push( { path: expand( pathPart[ 1 ] ) } );
-            return pathPart[ 2 ].trim();
+            steps.push( { path: expand( pathPart[ 1 ].trim() ) } );
+            return pathPart[ 2 ];
 
         }
         // assume whatever is left is a path
-        steps.push( { path: expand( path ) } );
+        steps.push( { path: expand( path.trim() ) } );
         return "";
 
     }
@@ -236,7 +236,7 @@
 
         // cut the path up into separate pieces;
         var separatedSteps = [];
-        var remainder = path;
+        var remainder = path.trim();
         while ( remainder.length > 0 ) {
 
             remainder = extractStep( remainder, separatedSteps );
