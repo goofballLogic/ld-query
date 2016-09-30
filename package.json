@@ -1,6 +1,6 @@
 {
   "name": "ld-query",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "A tiny library to query expanded JSON-LD documents",
   "main": "src/ld-query.js",
   "scripts": {
