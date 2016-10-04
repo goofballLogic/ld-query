@@ -117,6 +117,11 @@ An example of an expanded JSON-LD document:
       {
         "@value": "Andrew Goofball"
       }
+    ],
+    "http://www.example.org#friendCount": [
+      {
+        "@value": 0
+      }
     ]
   }
 ]
@@ -161,6 +166,8 @@ doc.query("foaf:firstName @value");                               // "Andrew"
 doc.query("so:description @value");                               // "Linked person"
 doc.query("@value");                                              // "goofballLogic"
 
+doc.query("ex:friendCount @value");                               // 0
+
 doc.query("ex:favouriteReads");                                   // QueryNode object
 doc.query("ex:favouriteReads").query("so:author @value")          // "Iain M Banks"
 doc.query("ex:favouriteReads so:author @value");                  // "Iain M Banks"
@@ -193,6 +200,7 @@ doc.query("ex:favouriteReads @id")                                // [ "http://w
 doc.queryAll("so:name @value")                                    // [ "Excession", "Gravity's Rainbox", "Andrew Goofball" ]
 doc.queryAll("> so:name @value")                                  // [ "Andrew Goofball" ]
 doc.queryAll("ex:favouriteReads > so:name @value")                // [ "Excession", "Gravity's Rainbox" ]
+
 ```
 
 [W3C JSON-LD recommendation]: https://www.w3.org/TR/json-ld/
