@@ -174,5 +174,11 @@ module.exports = function() {
         this.result.length.should.eql( 0 );
 
     } );
+    
+    this.Then(/^the result should be the number (\d+)$/, function (expected) {
+    
+      this.result.should.equal( parseInt( expected ) );
+      
+    } );
 
 };

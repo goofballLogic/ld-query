@@ -83,3 +83,7 @@ Feature: select values using query syntax
     Scenario: Query all for a path that does not exist
       When I query for all "alice:bob"
       Then the result should be an empty array
+    
+    Scenario: Query for a numberic falsey value (0)
+      When I query for "ex:friendCount @value"
+      Then the result should be the number 0

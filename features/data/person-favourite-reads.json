@@ -35,5 +35,8 @@
     }],
     "http://schema.org/name": [{
         "@value": "Andrew Goofball"
+    }],
+    "http://www.example.org#friendCount": [{
+        "@value": 0
     }]
 }

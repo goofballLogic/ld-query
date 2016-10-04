@@ -69,7 +69,7 @@
 
             var propPath = [ { path: prop } ].concat( path );
             var found = seek( obj[ prop ], assessPath, isSeekAll, propPath );
-            if ( found ) {
+            if ( typeof found !== "undefined" && found !== null ) {
 
                 if( !isSeekAll ) { return found; }
                 acc = acc.concat( found );
@@ -91,7 +91,7 @@
             var pathClone = [].concat( path );
             pathClone[ 0 ] = { path: pathClone[ 0 ].path };
             var found = seek( array[ i ], assessPath, isSeekAll, pathClone );
-            if ( found ) {
+            if ( typeof found !== "undefined" && found !== null ) {
 
                 if ( !isSeekAll ) { return found; }
                 acc = acc.concat( found );
@@ -107,7 +107,7 @@
 
         var found = isSeekAll ? [] : null;
         path = path || [];
-        if ( !json ) { return found; }
+        if ( typeof json === "undefined" ) { return found; }
         addObjectAttributesToPath( json, path[ 0 ] );
 
         if ( assessPath( path ) ) {
