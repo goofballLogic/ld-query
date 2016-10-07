@@ -139,7 +139,7 @@ Start by creating the ld-query object:
 
 ```
 var context = LD( {
-  "so": "http://www.schema.org/",
+  "@vocab": "http://www.schema.org/",
   "foaf": "http://xmlns.com/foaf/0.1/",
   "ex": "http://www.example.org#"
 } );
@@ -150,7 +150,7 @@ var doc = context( data );
 or
 ```
 var doc = LD( data, {
-   "so": "http://www.schema.org/",
+   "@vocab": "http://www.schema.org/",
    "foaf": "http://xmlns.com/foaf/0.1/",
    "ex": "http://www.example.org#"
 } );
@@ -163,43 +163,43 @@ The resulting object can be queried for the properties we need:
 doc.query("foaf:firstName");                                      // QueryNode object
 doc.query("foaf:firstName @value");                               // "Andrew"
 
-doc.query("so:description @value");                               // "Linked person"
+doc.query("description @value");                                  // "Linked person"
 doc.query("@value");                                              // "goofballLogic"
 
 doc.query("ex:friendCount @value");                               // 0
 
 doc.query("ex:favouriteReads");                                   // QueryNode object
-doc.query("ex:favouriteReads").query("so:author @value")          // "Iain M Banks"
-doc.query("ex:favouriteReads so:author @value");                  // "Iain M Banks"
-doc.query("so:author @value")                                     // "Iain M Banks"
+doc.query("ex:favouriteReads").query("author @value")             // "Iain M Banks"
+doc.query("ex:favouriteReads author @value");                     // "Iain M Banks"
+doc.query("author @value")                                        // "Iain M Banks"
 doc.query("ex:favouriteReads @value");                            // "Iain M Banks"
 
-doc.query("ex:favouriteReads so:author").json();                  // { "http://schema.org/author": [ { "@value": "Iain M Banks" } ], http://schema.org/name": [ { "@value": "Excession" } ], "@index": "banks-exc" }
+doc.query("ex:favouriteReads author").json();                     // { "http://schema.org/author": [ { "@value": "Iain M Banks" } ], http://schema.org/name": [ { "@value": "Excession" } ], "@index": "banks-exc" }
 
-doc.queryAll("ex:favouriteReads so:author");                      // array of 2 QueryNode objects
-doc.queryAll("ex:favouriteReads so:author @value");               // [ "Iain M Banks", "Thomas Pynchon" ]
+doc.queryAll("ex:favouriteReads author");                         // array of 2 QueryNode objects
+doc.queryAll("ex:favouriteReads author @value");                  // [ "Iain M Banks", "Thomas Pynchon" ]
 doc.queryAll("ex:favouriteReads").length;                         // 1
 
 doc.queryAll("ex:favouriteReads")[0]                              // QueryNode object
 
-doc.queryAll("so:firstName @value");                              // [ "Andrew" ]
-doc.queryAll("so:firstName").length;                              // 1
+doc.queryAll("firstName @value");                                 // [ "Andrew" ]
+doc.queryAll("firstName").length;                                 // 1
 
-doc.query("so:firstName").length;                                 // 1
+doc.query("firstName").length;                                    // 1
 
-doc.query("so:somepropertynotinyourdocument");                    // null
-doc.query("so:somepropertynotinyourdocument @value")              // null
+doc.query("somepropertynotinyourdocument");                       // null
+doc.query("somepropertynotinyourdocument @value")                 // null
 
-doc.queryAll("so:somepropertynotinyourdocument @value")           // []
+doc.queryAll("somepropertynotinyourdocument @value")              // []
 
-doc.query("ex:favouriteReads[@index=pynchon_gp] so:name @value")  // "Gravity's Rainbox"
+doc.query("ex:favouriteReads[@index=pynchon_gp] name @value")     // "Gravity's Rainbow"
 
 doc.queryAll("ex:favouriteReads @index")                          // [ "banks-exc", "pynchon-gr" ]
 doc.query("ex:favouriteReads @id")                                // [ "http://www.isbnsearch.org/isbn/9780553575378" ]
 
-doc.queryAll("so:name @value")                                    // [ "Excession", "Gravity's Rainbox", "Andrew Goofball" ]
-doc.queryAll("> so:name @value")                                  // [ "Andrew Goofball" ]
-doc.queryAll("ex:favouriteReads > so:name @value")                // [ "Excession", "Gravity's Rainbox" ]
+doc.queryAll("name @value")                                       // [ "Excession", "Gravity's Rainbox", "Andrew Goofball" ]
+doc.queryAll("> name @value")                                     // [ "Andrew Goofball" ]
+doc.queryAll("ex:favouriteReads > name @value")                   // [ "Excession", "Gravity's Rainbox" ]
 
 ```
 
