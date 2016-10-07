@@ -7,7 +7,7 @@ Feature: select values using query syntax
     Given the sample data containing favourite reads is loaded
     And I construct an ldQuery object using the loaded data and <context>
         | context                                                                                               |
-        | { "so": "http://schema.org/", "foaf": "http://xmlns.com/foaf/0.1/", "ex": "http://www.example.org#" } |
+        | { "@vocab": "http://schema.org/", "foaf": "http://xmlns.com/foaf/0.1/", "ex": "http://www.example.org#" } |
 
     Scenario: Query for the first name node
       When I query for "foaf:firstName"
@@ -18,7 +18,7 @@ Feature: select values using query syntax
       Then the result should be "Andrew"
 
     Scenario: Query for description value
-      When I query for "so:description @value"
+      When I query for "description @value"
       Then the result should be "Linked person"
 
     Scenario: Query for the first value
@@ -30,16 +30,16 @@ Feature: select values using query syntax
       Then the result should be "Need to finish reading this"
 
     Scenario: Query for item in collection
-      When I query for "ex:favouriteReads so:author @value"
+      When I query for "ex:favouriteReads author @value"
       Then the result should be "Iain M Banks"
 
     Scenario: Query for an item in a collection using method chaining
       Given I query for "ex:favouriteReads"
-      When I query the result for "so:author @value"
+      When I query the result for "author @value"
       Then the result should be "Iain M Banks"
 
     Scenario: Query for the first item in a collection not at the top level
-      When I query for "so:author @value"
+      When I query for "author @value"
       Then the result should be "Iain M Banks"
 
     Scenario: Get the JSON for a selected item
@@ -50,11 +50,11 @@ Feature: select values using query syntax
         | [{ "@id": "http://www.isbnsearch.org/isbn/9780553575378", "@index": "banks-exc", "http://schema.org/author": [{ "@value": "Iain M Banks" }], "http://schema.org/name": [{ "@value": "Excession" }] }, { "@id": "http://www.isbnsearch.org/isbn/9780143039945", "@index": "pynchon-gr", "http://schema.org/author": [{ "@value": "Thomas Pynchon" }], "http://schema.org/name": [{ "@value": "Gravity's Rainbow" }], "http://www.example.org#note-to-self": [{ "@value": "Need to finish reading this" }] }] |
 
     Scenario: Query for the author nodes
-        When I query for all "ex:favouriteReads so:author"
+        When I query for all "ex:favouriteReads author"
         Then the result should be an array of 2 QueryNodes
 
     Scenario: Query for author nodes, then for names
-        When I query for all "ex:favouriteReads so:author"
+        When I query for all "ex:favouriteReads author"
         And then I query the result for all "@value"
         Then the result should be an array [ "Iain M Banks" ]
 

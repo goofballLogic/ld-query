@@ -24,24 +24,76 @@
 
     };
 
+    /*
+    
+        Bare property names are ones which aren't qualified with an alias or namespace
+        For example, the following are considered qualified:
+            ex:friendCount
+            http://schema.org/name
+        And the following are considered not qualified:
+            name
+            author
+    
+    */
+    var barePropertyNamePattern = /^([^:]+)$/;
+    
+    /* 
+    
+        Non-expandable property names are ones which shouldn't be expanded by replacing aliases and pre-pending @vocab
+        For example, the following are non-expandable property names:
+            @list
+            @id
+        And the folowing are expandable property names:
+            ex:friendCount
+            name
+    
+    */
+    var nonExpandablePropertyNames = /@.*/;
+    
+    /*
+        Non-expandable value property names are the names of properties whose values should not be expanded by replacing aliases or prepending with @vocab
+        For example, the following are non-expandable value property names:
+            @list
+            @index
+        And the following are expandable value property names:
+            @id
+            @type
+            ex:friendCount
+            http://schema.org/name
+            
+    */
+    var nonExpandableValuePropNamePattern = /@(?!type|id).*/;
+    
     // this builds a set of nested functions which are capable of expanding namespace alises to full prefixes
     // if two parameters are provided then use the second parameter, otherwise use the first parameter.
     var expand = Object.keys( context )
 
         // for each alias (e.g. "so"), create a function to add to our chain
-        .reduce( function( prior, alias ) {
+        .reduce( function( prior, maybeAlias ) {
 
-            // create a regex for this alias
-            var expr = new RegExp( "^" + alias + ":", "g" );
-
+            var isVocab = maybeAlias === "@vocab";
+            
+            // create a regex for this alias or @vocab
+            var pattern = isVocab ?
+                barePropertyNamePattern // look for bare properties
+                : new RegExp( "^" + maybeAlias + ":", "g" ); // look for the alias
+                
+            // what to replace it with
+            var replacement = isVocab ?
+                context[ "@vocab" ] + "$1" // just prepend the @vocab
+                : context[ maybeAlias ] // this replaces the alias part
+                
             // return a new function to process the property name
             return function( propName ) {
+
+                // if it shouldn't be expanded, bail out    
+                if ( nonExpandablePropertyNames.test( propName ) ) { return propName; }
 
                 // if there are already functions in the chain, call them first
                 if ( prior ) { propName = prior( propName ); }
 
                 // then return the result of de-aliasing this alias
-                return ( propName || "" ).replace( expr, context[ alias ] );
+                return ( propName || "" ).replace( pattern, replacement );
 
             };
 
@@ -206,7 +258,9 @@
         if ( wherePart ) {
 
             if ( wherePart[ 1 ] ) { steps.push( { } ); }
-            steps.push( { key : wherePart[ 2 ].trim(), value: expand( wherePart[ 3 ].trim() ) } );
+            var step = { key : wherePart[ 2 ].trim(), value: wherePart[ 3 ].trim() };
+            if ( !nonExpandableValuePropNamePattern.test( step.key ) ) { step.value = expand( step.value ); }
+            steps.push( step );
             return ( wherePart[ 4 ] || "" );
 
         }
