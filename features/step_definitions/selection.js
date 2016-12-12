@@ -8,13 +8,6 @@ var should = require( "should" );
 
 module.exports = function() {
 
-     // a fallback for missing Array.isArray
-    var isArray = Array.isArray || function( arg ) {
-
-        return Object.prototype.toString.call( arg ) === "[object Array]";
-
-    };
-
     this.Given(/^the sample data containing favourite reads is loaded$/, function () {
 
         this.data = JSON.parse( favouriteReads );
@@ -23,25 +16,25 @@ module.exports = function() {
 
     this.Given(/^the sample data containing recursive constructs is loaded$/, function () {
 
-         this.data = JSON.parse( dataWithNesting );
+        this.data = JSON.parse( dataWithNesting );
 
     } );
 
     this.Given(/^the sample data containing a solitary field is loaded$/, function () {
 
-         this.data = JSON.parse( solitaryField );
+        this.data = JSON.parse( solitaryField );
 
     } );
 
     this.Given(/^the sample data containing operations is loaded$/, function () {
 
-         this.data = JSON.parse( operations );
+        this.data = JSON.parse( operations );
 
     } );
 
     this.Given(/^the sample data containing selection tests is loaded$/, function () {
 
-         this.data = JSON.parse( selectionTests );
+        this.data = JSON.parse( selectionTests );
 
     } );
 
@@ -133,7 +126,7 @@ module.exports = function() {
 
     this.When(/^I get the result's json$/, function () {
 
-       this.json = this.result.json();
+        this.json = this.result.json();
 
     } );
 
@@ -167,18 +160,25 @@ module.exports = function() {
 
     } );
 
+    this.Then(/^the result should be an array of arrays$/, function ( tableOfArrays ) {
+
+        function asArray( x ) { return JSON.parse( "[" + x[ 0 ] + "]" ); }
+        var expected = JSON.stringify( tableOfArrays.raw().map( asArray ) );
+        var actual = JSON.stringify( this.result );
+        actual.should.eql( expected );
+
+    } );
+    
     this.Then(/^the result should be an empty array$/, function () {
 
-        var resultIsArray = isArray( this.result );
-        resultIsArray.should.be.true();
-        this.result.length.should.eql( 0 );
+        JSON.stringify( this.result ).should.eql( "[]" );
 
     } );
     
     this.Then(/^the result should be the number (\d+)$/, function (expected) {
     
-      this.result.should.equal( parseInt( expected ) );
+        this.result.should.equal( parseInt( expected ) );
       
     } );
-
+    
 };

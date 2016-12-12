@@ -47,7 +47,7 @@ Feature: select values using query syntax
       When I get the result's json
       Then the json should match
         | json                                                                                                                                             |
-        | [{ "@id": "http://www.isbnsearch.org/isbn/9780553575378", "@index": "banks-exc", "http://schema.org/author": [{ "@value": "Iain M Banks" }], "http://schema.org/name": [{ "@value": "Excession" }] }, { "@id": "http://www.isbnsearch.org/isbn/9780143039945", "@index": "pynchon-gr", "http://schema.org/author": [{ "@value": "Thomas Pynchon" }], "http://schema.org/name": [{ "@value": "Gravity's Rainbow" }], "http://www.example.org#note-to-self": [{ "@value": "Need to finish reading this" }] }] |
+        | [{"@id":"http://www.isbnsearch.org/isbn/9780553575378","@index":"banks-exc","@type":["http://schema.org/Book"],"http://schema.org/author":[{"@value":"Iain M Banks"}],"http://schema.org/name":[{"@value":"Excession"}]},{"@id":"http://www.isbnsearch.org/isbn/9780143039945","@index":"pynchon-gr","@type":["http://schema.org/Book","http://schema.org/Movie"],"http://schema.org/author":[{"@value":"Thomas Pynchon"}],"http://schema.org/name":[{"@value":"Gravity's Rainbow"}],"http://www.example.org#note-to-self":[{"@value":"Need to finish reading this"}]}] |
 
     Scenario: Query for the author nodes
         When I query for all "ex:favouriteReads author"
@@ -63,14 +63,14 @@ Feature: select values using query syntax
         And I get the result's json
         Then the json should match
         | json                                                                                                                                             |
-        | {"@id":"http://www.isbnsearch.org/isbn/9780553575378","@index":"banks-exc","http://schema.org/author":[{"@value":"Iain M Banks"}],"http://schema.org/name":[{"@value":"Excession"}]} |
+        | {"@id":"http://www.isbnsearch.org/isbn/9780553575378","@index":"banks-exc","@type":["http://schema.org/Book"],"http://schema.org/author":[{"@value":"Iain M Banks"}],"http://schema.org/name":[{"@value":"Excession"}]} |
 
     Scenario: Query for favourite reads by index
         When I query for "ex:favouriteReads[@index=banks-exc]"
         And I get the result's json
         Then the json should match
         | json                                                                                                                                             |
-        | {"@id":"http://www.isbnsearch.org/isbn/9780553575378","@index":"banks-exc","http://schema.org/author":[{"@value":"Iain M Banks"}],"http://schema.org/name":[{"@value":"Excession"}]} |
+        | {"@id":"http://www.isbnsearch.org/isbn/9780553575378","@index":"banks-exc","@type":["http://schema.org/Book"],"http://schema.org/author":[{"@value":"Iain M Banks"}],"http://schema.org/name":[{"@value":"Excession"}]} |
 
     Scenario: Query for favourite reads by index, then get id
         When I query for "ex:favouriteReads[@index=banks-exc] @id"
@@ -87,3 +87,14 @@ Feature: select values using query syntax
     Scenario: Query for a numberic falsey value (0)
       When I query for "ex:friendCount @value"
       Then the result should be the number 0
+    
+    Scenario: Query for the first type
+      When I query for "@type"
+      Then the result should be an array [ "http://schema.org/Person" ]
+      
+    Scenario: Query for all types
+      When I query for all "@type"
+      Then the result should be an array of arrays
+        | "http://schema.org/Person"                          |
+        | "http://schema.org/Book"                            |
+        | "http://schema.org/Book", "http://schema.org/Movie" |

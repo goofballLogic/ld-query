@@ -11,10 +11,7 @@ Feature: select values by type using child combinators
 
     Scenario: Query for child path under root node should not retrieve other matching paths
         When I query for "> @type"
-        And I get the result's json
-        Then the json should match
-        | json                                                               |
-        | ["http://www.example.org#unrealistic-data-with-no-decent-analogy"] |
+        Then the result should be an array [ "http://www.example.org#unrealistic-data-with-no-decent-analogy" ]
 
     Scenario: Query for child path under current node should not retrieve other matching paths
         When I query for "ex:type[@index=index3]"

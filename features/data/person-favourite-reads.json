@@ -11,6 +11,9 @@
     "http://www.example.org#favouriteReads": [{
         "@id": "http://www.isbnsearch.org/isbn/9780553575378",
         "@index": "banks-exc",
+        "@type": [
+          "http://schema.org/Book"
+        ],
         "http://schema.org/author": [{
             "@value": "Iain M Banks"
         }],
@@ -20,6 +23,10 @@
     }, {
         "@id": "http://www.isbnsearch.org/isbn/9780143039945",
         "@index": "pynchon-gr",
+        "@type": [
+          "http://schema.org/Book",
+          "http://schema.org/Movie"
+        ],
         "http://schema.org/author": [{
             "@value": "Thomas Pynchon"
         }],

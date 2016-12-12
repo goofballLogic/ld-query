@@ -28,11 +28,13 @@ An example of a JSON-LD document:
   "favouriteReads": {
     "banks-exc": {
       "@id": "http://www.isbnsearch.org/isbn/9780553575378",
+      "@type": "Book",
       "author": "Iain M Banks",
       "name": "Excession"
     },
     "pynchon-gr": {
       "@id": "http://www.isbnsearch.org/isbn/9780143039945",
+      "@type": [ "Book", "Movie" ],
       "author": "Thomas Pynchon",
       "name": "Gravity's Rainbow",
       "note-to-self": "Need to finish reading this"
@@ -71,6 +73,9 @@ An example of an expanded JSON-LD document:
     "http://www.example.org#favouriteReads": [
       {
         "@id": "http://www.isbnsearch.org/isbn/9780553575378",
+        "@type": [
+          "http://schema.org/Book"
+        ],
         "@index": "banks-exc",
         "http://schema.org/author": [
           {
@@ -85,6 +90,10 @@ An example of an expanded JSON-LD document:
       },
       {
         "@id": "http://www.isbnsearch.org/isbn/9780143039945",
+        "@type": [
+          "http://schema.org/Book",
+          "http://schema.org/Movie"
+        ],
         "@index": "pynchon-gr",
         "http://schema.org/author": [
           {
@@ -200,6 +209,9 @@ doc.query("ex:favouriteReads @id")                                // [ "http://w
 doc.queryAll("name @value")                                       // [ "Excession", "Gravity's Rainbox", "Andrew Goofball" ]
 doc.queryAll("> name @value")                                     // [ "Andrew Goofball" ]
 doc.queryAll("ex:favouriteReads > name @value")                   // [ "Excession", "Gravity's Rainbox" ]
+
+doc.query("@type")                                               // [ "http://schema.org/Person" ]
+doc.queryAll("@type")                                            // [ [ "http://schema.org/Person"], [ "http://schema.org/Book" ], [ "http://schema.org/Book", "http://schema.org/Movie" ] ]
 
 ```
 

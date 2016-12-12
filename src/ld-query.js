@@ -74,14 +74,14 @@
             var isVocab = maybeAlias === "@vocab";
             
             // create a regex for this alias or @vocab
-            var pattern = isVocab ?
-                barePropertyNamePattern // look for bare properties
+            var pattern = isVocab 
+                ? barePropertyNamePattern // look for bare properties
                 : new RegExp( "^" + maybeAlias + ":", "g" ); // look for the alias
                 
             // what to replace it with
-            var replacement = isVocab ?
-                context[ "@vocab" ] + "$1" // just prepend the @vocab
-                : context[ maybeAlias ] // this replaces the alias part
+            var replacement = isVocab
+                ? context[ "@vocab" ] + "$1" // just prepend the @vocab
+                : context[ maybeAlias ]; // this replaces the alias part
                 
             // return a new function to process the property name
             return function( propName ) {
@@ -124,7 +124,15 @@
             if ( typeof found !== "undefined" && found !== null ) {
 
                 if( !isSeekAll ) { return found; }
-                acc = acc.concat( found );
+                if ( prop === "@type" && found.length ) { 
+                    
+                    acc.push( found );
+
+                } else {
+                
+                    acc = acc.concat( found );
+                    
+                }
 
             }
 
@@ -331,7 +339,7 @@
 
             json: found,
             isFinal: ( isSeekAll ? found.length === 0 : found === null ) ||
-                !!~[ "@id", "@index", "@value" ].indexOf( lastStep )
+                !!~[ "@id", "@index", "@value", "@type" ].indexOf( lastStep )
 
         };
 
@@ -357,6 +365,7 @@
 
         // select the json targetted by this path
         var selections = select( this.json(), path, true );
+
         // if the result is "final" (e.g. @value), return an array of the raw json
         return selections.isFinal ? selections.json : selections.json.map( buildQueryNode );
 
@@ -369,7 +378,7 @@
 
             return new QueryNode( dataContext );
 
-        }
+        };
 
     } else {
 
