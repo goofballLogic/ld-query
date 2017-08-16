@@ -215,6 +215,30 @@ doc.queryAll("@type")                                            // [ [ "http://
 
 ```
 
+## Benchmarking
+
+Note: The benchmarking tools require that you have `git` available on the path.
+
+To benchmark the current version of the library against the latest commit to
+the `master` branch, run:
+
+```
+npm run benchmark
+```
+
+To benchmark the current version of the library against a particular commit,
+branch or tag, run:
+
+```
+npm run benchmark -- --compare-to <commit|branch|tag>
+```
+
+To run only a subset of benchmarks, run:
+
+```
+npm run benchmark -- --benchmark "<regexp matching benchmark names>"
+```
+
 [W3C JSON-LD recommendation]: https://www.w3.org/TR/json-ld/
 [JSON-LD Processing Algorithms and API recommendation]: https://www.w3.org/TR/json-ld-api/#expansion
 [jsonld.js]: https://github.com/digitalbazaar/jsonld.js

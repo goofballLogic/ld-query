@@ -132,8 +132,8 @@ module.exports = function() {
 
     this.Then(/^the json should match$/, function (table) {
 
-        var actual = JSON.stringify( JSON.parse( table.hashes()[ 0 ].json ) );
-        var expected = JSON.stringify( this.json );
+        var expected = JSON.stringify( JSON.parse( table.hashes()[ 0 ].json ) );
+        var actual = JSON.stringify( this.json );
         actual.should.match( expected );
 
     } );
