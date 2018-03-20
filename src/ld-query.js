@@ -607,7 +607,11 @@
 
     function findIn( parent, self ) {
 
-        var pathToSelf = parent._state.paths.filter( x => x[ x.length - 1 ].value === self )[ 0 ];
+        var pathToSelf = parent._state.paths.filter( function( path ) {
+
+            return path[ path.length - 1 ].value === self;
+
+        } )[ 0 ];
         return pathToSelf ? pathToSelf[ pathToSelf.length - 2 ] : null;
 
     }
