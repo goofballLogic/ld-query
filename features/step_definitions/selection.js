@@ -98,9 +98,12 @@ module.exports = function() {
 
     this.When(/^I navigate to the parent (\d+) times$/, function( repeats ) {
 
-        while( repeats-- > 0 )
+        while( repeats > 0 ) {
 
             this.result = this.result.parent();
+            repeats--;
+
+        }
 
     } );
 
