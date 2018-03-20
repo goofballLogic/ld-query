@@ -1,5 +1,6 @@
 var favouriteReads = JSON.stringify( require( "../data/person-favourite-reads.json" ) );
 var dataWithNesting = JSON.stringify( require( "../data/data-with-nesting.json" ) );
+var deepData = JSON.stringify( require( "../data/deep-data.json" ) );
 var solitaryField = JSON.stringify( require( "../data/solitary.json" ) );
 var operations = JSON.stringify( require( "../data/operations.json" ) );
 var selectionTests = JSON.stringify( require( "../data/selection-tests.json" ) );
@@ -35,6 +36,12 @@ module.exports = function() {
     this.Given(/^the sample data containing selection tests is loaded$/, function () {
 
         this.data = JSON.parse( selectionTests );
+
+    } );
+
+    this.Given(/^the sample data containing deep data is loaded$/, function () {
+
+        this.data = JSON.parse( deepData );
 
     } );
 
@@ -86,6 +93,14 @@ module.exports = function() {
         }
         var querySite = [].concat( this.result || [] )[ 0 ];
         this.result = isAll ? querySite.queryAll( selector ) : querySite.query( selector );
+
+    } );
+
+    this.When(/^I navigate to the parent (\d+) times$/, function( repeats ) {
+
+        while( repeats-- > 0 )
+
+            this.result = this.result.parent();
 
     } );
 
@@ -168,17 +183,17 @@ module.exports = function() {
         actual.should.eql( expected );
 
     } );
-    
+
     this.Then(/^the result should be an empty array$/, function () {
 
         JSON.stringify( this.result ).should.eql( "[]" );
 
     } );
-    
+
     this.Then(/^the result should be the number (\d+)$/, function (expected) {
-    
+
         this.result.should.equal( parseInt( expected ) );
-      
+
     } );
-    
+
 };

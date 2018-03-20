@@ -5,7 +5,7 @@
   "main": "src/ld-query.js",
   "scripts": {
     "test": "./node_modules/.bin/cucumberjs",
-    "benchmark" : "node ./benchmark/benchmark.js"
+    "benchmark": "node ./benchmark/benchmark.js"
   },
   "repository": {
     "type": "git",
@@ -21,11 +21,11 @@
   },
   "homepage": "https://github.com/goofballLogic/ld-query#readme",
   "devDependencies": {
-    "benchmark" : "^2.1.4",
+    "benchmark": "^2.1.4",
     "cucumber": "^1.2.0",
-    "easy-table" : "^1.1.0",
-    "microtime" : "^2.1.5",
+    "easy-table": "^1.1.0",
+    "microtime": "^2.1.5",
     "should": "^9.0.2",
-    "tmp" : "^0.0.31"
+    "tmp": "^0.0.31"
   }
 }

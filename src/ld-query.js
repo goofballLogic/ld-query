@@ -25,7 +25,7 @@
     };
 
     /*
-    
+
         Bare property names are ones which aren't qualified with an alias or namespace
         For example, the following are considered qualified:
             ex:friendCount
@@ -33,12 +33,12 @@
         And the following are considered not qualified:
             name
             author
-    
+
     */
     var barePropertyNamePattern = /^([^:]+)$/;
-    
-    /* 
-    
+
+    /*
+
         Non-expandable property names are ones which shouldn't be expanded by replacing aliases and pre-pending @vocab
         For example, the following are non-expandable property names:
             @list
@@ -46,10 +46,10 @@
         And the folowing are expandable property names:
             ex:friendCount
             name
-    
+
     */
     var nonExpandablePropertyNames = /@.*/;
-    
+
     /*
         Non-expandable value property names are the names of properties whose values should not be expanded by replacing aliases or prepending with @vocab
         For example, the following are non-expandable value property names:
@@ -60,12 +60,12 @@
             @type
             ex:friendCount
             http://schema.org/name
-            
+
     */
     var nonExpandableValuePropNamePattern = /@(?!type|id).*/;
 
     var stepCache = {};
-    
+
     // this builds a set of nested functions which are capable of expanding namespace alises to full prefixes
     // if two parameters are provided then use the second parameter, otherwise use the first parameter.
     var expanders = Object.keys( context )
@@ -74,17 +74,17 @@
         .reduce( function( ret, maybeAlias ) {
 
             var isVocab = maybeAlias === "@vocab";
-            
+
             // create a regex for this alias or @vocab
-            var pattern = isVocab 
+            var pattern = isVocab
                 ? barePropertyNamePattern // look for bare properties
                 : new RegExp( "^" + maybeAlias + ":", "g" ); // look for the alias
-                
+
             // what to replace it with
             var replacement = isVocab
                 ? context[ "@vocab" ] + "$1" // just prepend the @vocab
                 : context[ maybeAlias ]; // this replaces the alias part
-                
+
             // return a new function to process the property name
             ret.push( function( propName ) {
 
@@ -99,18 +99,18 @@
 
     var expand = function( propName ) {
 
-        // if it shouldn't be expanded, bail out    
+        // if it shouldn't be expanded, bail out
         if ( nonExpandablePropertyNames.test( propName ) ) {
 
             return propName;
 
         }
-        
+
         // Otherwise apply prefix expansions in order
         for ( var ii = 0; ii < expanders.length; ii++ ) {
 
             propName = expanders[ ii ]( propName );
-            
+
         }
 
         return propName;
@@ -121,13 +121,13 @@
         var len = arr.length;
 
         var list = [];
-        
+
         if ( 0 < len ) {
 
             while ( len-- ) {
-                
+
                 list.push(len);
-                
+
             }
 
         }
@@ -141,7 +141,7 @@
         if ( isArray( ctx ) ) {
 
             if ( "@type" === key ) {
-                
+
                 ret = {
                     type: "leaf",
                     context: ctx,
@@ -161,7 +161,7 @@
                 };
 
             }
-            
+
         } else if ( "object" === typeof ctx ) {
 
             var keys = Object.keys(ctx);
@@ -187,7 +187,7 @@
         }
 
         if ( "array" === parent.type ) {
-            
+
             ret.index = key;
             ret.key = parent.key;
 
@@ -195,7 +195,7 @@
 
         return ret;
     }
-    
+
     function walk(doc, state, stepf) {
         var stopped = false;
         var stop = function( v ) {
@@ -204,7 +204,7 @@
             return v;
 
         };
-        
+
         var stack = [ StackFrame( {}, "#document", doc ) ];
         var stepId = 0;
         var path = [{
@@ -236,9 +236,9 @@
 
                 stack.push( newFrame );
                 continue;
-                
+
             }
-            
+
             path.push({
                 id: stepId++,
                 type: newFrame.type,
@@ -247,21 +247,21 @@
                 index: newFrame.index,
                 value: value
             });
-            
+
             state = stepf( state, path, stop );
 
             if ( stopped ) {
 
                 break;
-                
+
             } else if ( "leaf" === newFrame.type ) {
 
                 path.pop();
-                
+
             } else {
 
                 stack.push( newFrame );
-                
+
             }
         }
 
@@ -272,23 +272,23 @@
 
         var stopped = false;
         var stop = function( v ) {
-            
+
             stopped = true;
             return v;
-            
+
         };
-        
+
         var path;
         for ( var ii = 0; ii < paths.length; ii++ ) {
 
             state = stepf( state, paths[ ii ], stop );
             if ( stopped ) { break; }
-            
+
         }
         return state;
-        
+
     }
-    
+
     function testPathKey( nodePathEntry, stepKey, stepValue ) {
 
         var pathValue = nodePathEntry[ stepKey ];
@@ -306,7 +306,7 @@
 
             }
             return true;
-            
+
         }
         else if ( isArray( pathValue ) ) {
 
@@ -327,7 +327,7 @@
             var stepPath = step.path;
             // check whether all keys in step ( path & @attributes ) match
             var match = false;
-            
+
             if ( "undefined" === typeof stepPath || stepPath === node.key ) {
 
                 match = true;
@@ -340,13 +340,13 @@
 
                         match = false;
                         break;
-                        
+
                     }
-                        
+
                 }
-                
+
             }
-            
+
             if ( match ) { break; }
 
         }
@@ -357,10 +357,10 @@
 
     function assessPathForSteps( steps ) {
         steps = steps || [];
-        
+
         return function assessPath( nodePath ) {
             if ( !nodePath ) { return false; }
-            
+
             var bookmark = nodePath.length;
             var directChild = false;
             var first = true;
@@ -368,7 +368,7 @@
             for ( var i = 0; i < steps.length; i++ ) {
 
                 var step = steps[ i ];
-                
+
                 if ( step.directChild ) {
 
                     directChild = true;
@@ -380,17 +380,17 @@
                     // find the next step starting after the bookmarked offset
                     var found = findNextPathMatch( nodePath, start, step );
                     if ( first ) {
-                        
+
                         if ( found !== start ) {
 
                             return false;
-                            
+
                         }
 
                         first = false;
 
                     }
-                    
+
                     // if the directChild flag is set, only pass if the found is beside the last bookmark...
                     if ( directChild ) {
 
@@ -415,10 +415,10 @@
     }
 
     function selectStep( steps, isSeekAll ) {
-        
+
         var assess = assessPathForSteps( steps );
         return function( result, path, stop ) {
-            
+
             if ( assess( path ) ) {
 
                 var found;
@@ -427,15 +427,15 @@
                     found = path[ path.length - 2 ].value["@type"];
 
                 } else {
-                
+
                     found = path[ path.length - 1 ].value;
 
                 }
-                
+
                 if ( !isSeekAll ) {
 
                     return stop(found);
-                    
+
                 }
                 result.push( found );
 
@@ -444,7 +444,7 @@
             return result;
 
         };
-        
+
     }
 
     function collectPaths( json ) {
@@ -456,8 +456,8 @@
 
         } );
 
-    }   
-    
+    }
+
     function extractStep( path, steps ) {
 
         // try and extract a 'where' [@attribute=value] part from the start of the string
@@ -522,7 +522,7 @@
             if (steps) { return steps; }
 
         }
-        
+
         // cut the path up into separate pieces;
         var separatedSteps = [];
         var remainder = path.trim();
@@ -553,11 +553,11 @@
         } );
 
         if ( shouldCache ) {
-        
+
             stepCache[path] = steps;
 
-        }            
-        
+        }
+
         return steps;
 
     }
@@ -569,7 +569,7 @@
             return null;
 
         }
-        
+
         var paths = state.paths;
         if ( !paths ) {
 
@@ -580,7 +580,7 @@
         return paths;
 
     }
-    
+
     // select json for this path
 
     function select( state, json, path, isSeekAll ) {
@@ -593,7 +593,7 @@
         var found = walker( paths || json,
                             isSeekAll ? [] : null,
                             selectStep( steps, isSeekAll ) );
-                            
+
         var lastStep = steps[ 0 ].path;
         return {
 
@@ -605,12 +605,26 @@
 
     }
 
+    function findIn( parent, self ) {
+
+        var pathToSelf = parent._state.paths.filter( x => x[ x.length - 1 ].value === self )[ 0 ];
+        return pathToSelf ? pathToSelf[ pathToSelf.length - 2 ] : null;
+
+    }
+
     function QueryNode( jsonData, parent ) {
 
         this.json = function() { return jsonData; };
         var state = this._state = { cachePaths: true, paths: null };
+        this.parent = function() {
+
+            var found = findIn( parent, jsonData );
+            if( found === parent.json() ) return parent;
+            if( found ) { return new QueryNode( found.value, parent ); }
+
+        }
         if ( parent ) {
-            
+
             var pstate = parent._state;
 
             state.cachePaths = pstate.cachePaths;
@@ -629,7 +643,7 @@
         this._state.cachePaths = cache;
         cache || ( this._state.paths = null );
         return this;
-        
+
     }
 
     QueryNode.prototype.query = function( selector ) {
@@ -650,7 +664,7 @@
             : selections.json.map( buildQueryNode( this ) );
 
     };
-    
+
     if ( asFactory ) {
 
         // if one parameter was supplied, return the factory function

@@ -1,0 +1,20 @@
+[
+    {
+
+        "http://test.com/name": { "@value": "Sam" },
+        "http://test.com/child": {
+
+            "http://test.com/name": { "@value": "Heather" },
+            "http://test.com/child": {
+
+                "http://test.com/name": { "@value": "Paul" }
+
+            }
+
+        }
+
+    },
+    {
+        "http://test.com/name": { "@value": "Robert" }
+    }
+]
