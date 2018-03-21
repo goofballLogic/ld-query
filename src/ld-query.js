@@ -585,8 +585,6 @@
 
     function select( state, json, path, isSeekAll ) {
 
-        // we treat the input json as expanded json, no matter what
-        json = Array.isArray( json ) ? json : [].concat( json || [] );
         var steps = getSteps( state, path );
         if ( !steps.length ) { return { json: null }; }
 
