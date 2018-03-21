@@ -83,18 +83,24 @@ Feature: select values using query syntax
     Scenario: Query all for a path that does not exist
       When I query for all "alice:bob"
       Then the result should be an empty array
-    
+
     Scenario: Query for a numberic falsey value (0)
       When I query for "ex:friendCount @value"
       Then the result should be the number 0
-    
+
     Scenario: Query for the first type
       When I query for "@type"
       Then the result should be an array [ "http://schema.org/Person" ]
-      
+
     Scenario: Query for all types
       When I query for all "@type"
       Then the result should be an array of arrays
         | "http://schema.org/Person"                          |
         | "http://schema.org/Book"                            |
         | "http://schema.org/Book", "http://schema.org/Movie" |
+
+    Scenario: Query then query again
+     Given I query for "ex:favouriteReads[@index=banks-exc]"
+      Then the result should be a QueryNode object
+      When I query the result for "[@index=banks-exc]"
+      Then the result should be a QueryNode object
