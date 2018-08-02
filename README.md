@@ -46,7 +46,7 @@ An example of a JSON-LD document:
 }
 ```
 
-##Expansion is a pre-requisite
+## Expansion is a pre-requisite
 
 > WTF? Why would I do this to my data?
 > Here's [a video explaining] the mechanism, which goes some way in justifying what we're doing here.
@@ -136,11 +136,11 @@ An example of an expanded JSON-LD document:
 ]
 ```
 
-##Structure
+## Structure
 
 We are trying to implement functionality which follows where possible the definition established by the [DOM querySelector] and [DOM querySelectorAll] APIs. Because the definitions will only ever by analogous to each other, we use "query" and "queryAll" rather than "querySelector" and "querySelectorAll".
 
-##Examples
+## Examples
 
 We would like to be able to query the data in a fairly simple manner, like this:
 
