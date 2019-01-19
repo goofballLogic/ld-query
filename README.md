@@ -11,7 +11,7 @@ The JSON-LD format is defined in the [W3C JSON-LD recommendation].
 
 An example of a JSON-LD document:
 
-```
+```json
 {
   "@context": {
     "@vocab": "http://schema.org/",
@@ -59,7 +59,7 @@ To use this library, your data needs to be in exapnded form. You can use existin
 
 An example of an expanded JSON-LD document:
 
-```
+```json
 [
   {
     "@type": [
@@ -146,7 +146,7 @@ We would like to be able to query the data in a fairly simple manner, like this:
 
 Start by creating the ld-query object:
 
-```
+```js
 var context = LD( {
   "@vocab": "http://www.schema.org/",
   "foaf": "http://xmlns.com/foaf/0.1/",
@@ -157,7 +157,7 @@ var doc = context( data );
 ```
 
 or
-```
+```js
 var doc = LD( data, {
    "@vocab": "http://www.schema.org/",
    "foaf": "http://xmlns.com/foaf/0.1/",
@@ -168,7 +168,7 @@ var doc = LD( data, {
 The resulting object can be queried for the properties we need:
 
 
-```
+```js
 doc.query("foaf:firstName");                                      // QueryNode object
 doc.query("foaf:firstName @value");                               // "Andrew"
 
@@ -222,20 +222,20 @@ Note: The benchmarking tools require that you have `git` available on the path.
 To benchmark the current version of the library against the latest commit to
 the `master` branch, run:
 
-```
+```sh
 npm run benchmark
 ```
 
 To benchmark the current version of the library against a particular commit,
 branch or tag, run:
 
-```
+```sh
 npm run benchmark -- --compare-to <commit|branch|tag>
 ```
 
 To run only a subset of benchmarks, run:
 
-```
+```sh
 npm run benchmark -- --benchmark "<regexp matching benchmark names>"
 ```
 
