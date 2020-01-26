@@ -644,6 +644,7 @@
     }
 
     QueryNode.prototype.withPathCaching = function (cache) {
+
         cache = !!cache;
         this._state.cachePaths = cache;
         cache || (this._state.paths = null);
