@@ -24,7 +24,6 @@
     "benchmark": "^2.1.4",
     "cucumber": "^6.0.5",
     "easy-table": "^1.1.0",
-    "microtime": "^2.1.5",
     "should": "^13.2.3",
     "tmp": "^0.1.0"
   }
