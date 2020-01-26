@@ -1,0 +1,20 @@
+[
+    {
+        "@id": "http://test.com/1",
+        "http://test.com/name": [
+            {
+                "@value": "Thing 1"
+            }
+        ],
+        "related": [
+            {
+                "@id": "http://test.com/2",
+                "http://test.com/name": [
+                    {
+                        "@value": "Thing 2"
+                    }
+                ]
+            }
+        ]
+    }
+]

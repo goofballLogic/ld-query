@@ -4,10 +4,17 @@ var deepData = JSON.stringify( require( "../data/deep-data.json" ) );
 var solitaryField = JSON.stringify( require( "../data/solitary.json" ) );
 var operations = JSON.stringify( require( "../data/operations.json" ) );
 var selectionTests = JSON.stringify( require( "../data/selection-tests.json" ) );
+var nestedIdentifiedNodes = JSON.stringify( require( "../data/nested-identified-nodes.json" ) );
 var ldQuery = require( "../../src/ld-query" );
 var should = require( "should" );
 
 module.exports = function() {
+
+    this.Given(/^the sample data containing nested identified nodes is loaded$/, function () {
+
+        this.data = JSON.parse( nestedIdentifiedNodes );
+
+    } );
 
     this.Given(/^the sample data containing favourite reads is loaded$/, function () {
 
