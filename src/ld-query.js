@@ -182,7 +182,7 @@
                 index: -1,
                 key: key,
                 items: []
-            }
+            };
 
         }
 
@@ -279,7 +279,6 @@
 
         };
 
-        var path;
         for (var ii = 0; ii < paths.length; ii++) {
 
             state = stepf(state, paths[ii], stop);
@@ -311,7 +310,7 @@
         }
         else if (isArray(pathValue)) {
 
-            return ~pathValue.indexOf(stepValue)
+            return ~pathValue.indexOf(stepValue);
 
         }
         return pathValue === stepValue;
@@ -321,7 +320,7 @@
     function findNextPathMatch(nodePath, start, step) {
 
         var i = start;
-        for (var i = start; -1 < i; i--) {
+        for (i = start; -1 < i; i--) {
 
             var node = nodePath[i];
             var nodeVal = node.value;
@@ -590,7 +589,7 @@
         if (!steps.length) { return { json: null }; }
 
         var paths = getCachedPaths(state, json);
-        var walker = !!paths ? cachedWalk : walk;
+        var walker = paths ? cachedWalk : walk;
         var found = walker(paths || json,
             isSeekAll ? [] : null,
             selectStep(steps, isSeekAll));
@@ -627,7 +626,7 @@
             if (found === parent.json()) return parent;
             if (found) { return new QueryNode(found.value, parent); }
 
-        }
+        };
         if (parent) {
 
             var pstate = parent._state;
@@ -639,7 +638,7 @@
 
     function buildQueryNode(parent) {
 
-        return function (json) { return new QueryNode(json, parent); }
+        return function (json) { return new QueryNode(json, parent); };
 
     }
 
