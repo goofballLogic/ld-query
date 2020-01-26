@@ -13,5 +13,5 @@ Feature: traverse back out of a JSON node to parent nodes
       When I query for "name[@value=Paul]"
       And I navigate to the parent 3 times
       And I query for all "> name @value"
-      Then the result should be an array [ "Sam", "Robert" ]
+      Then the result should be the array [ "Sam", "Robert" ]
 

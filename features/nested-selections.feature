@@ -11,4 +11,4 @@ Feature: select values using query syntax against documents with recursive prope
 
     Scenario: Query for the author nodes
         When I query for all "ex:div @value"
-        Then the result should be an array [ "How is it hanging?", "Lots of divs here, yo?" ]
+        Then the result should be the array [ "How is it hanging?", "Lots of divs here, yo?" ]

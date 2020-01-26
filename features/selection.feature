@@ -56,7 +56,7 @@ Feature: select values using query syntax
     Scenario: Query for author nodes, then for names
         When I query for all "ex:favouriteReads author"
         And then I query the result for all "@value"
-        Then the result should be an array [ "Iain M Banks" ]
+        Then the result should be the array [ "Iain M Banks" ]
 
     Scenario: Query for author nodes, by index
         When I query for "ex:favouriteReads[@index=banks-exc]"
@@ -83,15 +83,15 @@ Feature: select values using query syntax
     Scenario: Query all for a path that does not exist
       When I query for all "alice:bob"
       Then the result should be an empty array
-    
+
     Scenario: Query for a numberic falsey value (0)
       When I query for "ex:friendCount @value"
       Then the result should be the number 0
-    
+
     Scenario: Query for the first type
       When I query for "@type"
-      Then the result should be an array [ "http://schema.org/Person" ]
-      
+      Then the result should be the array [ "http://schema.org/Person" ]
+
     Scenario: Query for all types
       When I query for all "@type"
       Then the result should be an array of arrays

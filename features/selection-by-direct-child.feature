@@ -11,7 +11,7 @@ Feature: select values by type using child combinators
 
     Scenario: Query for child path under root node should not retrieve other matching paths
         When I query for "> @type"
-        Then the result should be an array [ "http://www.example.org#unrealistic-data-with-no-decent-analogy" ]
+        Then the result should be the array [ "http://www.example.org#unrealistic-data-with-no-decent-analogy" ]
 
     Scenario: Query for child path under current node should not retrieve other matching paths
         When I query for "ex:type[@index=index3]"
@@ -20,4 +20,4 @@ Feature: select values by type using child combinators
 
     Scenario: Query should match any part of the tree
         When I query for all "ex:type[@id=ex:type4] > ex:grabThis @value"
-        Then the result should be an array [ "Three-Four", "Three-NoIndex" ]
+        Then the result should be the array [ "Three-Four", "Three-NoIndex" ]

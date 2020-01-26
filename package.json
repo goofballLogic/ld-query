@@ -4,7 +4,7 @@
   "description": "A tiny library to query expanded JSON-LD documents",
   "main": "src/ld-query.js",
   "scripts": {
-    "test": "./node_modules/.bin/cucumberjs",
+    "test": "./node_modules/.bin/cucumber-js",
     "benchmark": "node ./benchmark/benchmark.js"
   },
   "repository": {
@@ -22,10 +22,10 @@
   "homepage": "https://github.com/goofballLogic/ld-query#readme",
   "devDependencies": {
     "benchmark": "^2.1.4",
-    "cucumber": "^1.2.0",
+    "cucumber": "^6.0.5",
     "easy-table": "^1.1.0",
     "microtime": "^2.1.5",
-    "should": "^9.0.2",
-    "tmp": "^0.0.31"
+    "should": "^13.2.3",
+    "tmp": "^0.1.0"
   }
 }
