@@ -92,7 +92,7 @@ When("I query for {string}", function (selector) {
 
 });
 
-When("I query for all {string}", function(selector) {
+When("I query for all {string}", function (selector) {
 
     this.result = this.query.queryAll(selector);
 
