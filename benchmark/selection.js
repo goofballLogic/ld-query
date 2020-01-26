@@ -1,7 +1,7 @@
-var DATA = require( "./data/selection-tests.json" )
+var DATA = require( "./data/selection-tests.json" );
 var CONTEXT = {
     "ex": "http://www.example.org#"
-}
+};
 
 /*
  * We don't use `should` here since the overhead is actually significant
@@ -24,7 +24,7 @@ function assertLength( obj, expected ) {
         throw new Error( "Expected obj: " + obj
                         + " to have length: " + expected
                         + ", actual length: " + obj.length);
-    
+
 }
 
 module.exports = function ( LD ) {
@@ -35,70 +35,70 @@ module.exports = function ( LD ) {
         {
             name: "Query single value (reuse doc)",
             fn: function() {
-                
+
                 var actual = selectionDoc
                     .query( "ex:grabThis @value" );
                 assertEquals(actual, "One-Two");
-                
+
             }
         },
         {
             name: "Query all values (reuse doc)",
             fn: function() {
-                
+
                 var actual = selectionDoc
                     .queryAll( "ex:grabThis @value" );
                 assertLength( actual, 5 );
-                
+
             }
         },
         {
             name: "Query single value (fresh doc)",
             fn: function() {
-                
+
                 var doc = LD( DATA, CONTEXT );
                 var actual = doc.query( "ex:grabThis @value" );
                 assertEquals(actual, "One-Two");
-                
+
             }
         },
         {
             name: "Query single value (fresh doc, no pathcache)",
             fn: function() {
-                
+
                 var doc = LD( DATA, CONTEXT );
                 if (doc.withPathCaching)
                     doc.withPathCaching(false);
 
                 var actual = doc.query( "ex:grabThis @value" );
                 assertEquals(actual, "One-Two");
-                
+
             }
         },
         {
             name: "Query all values (fresh doc)",
             fn: function() {
-                
+
                 var actual = LD( DATA, CONTEXT )
                     .queryAll( "ex:grabThis @value" );
                 assertLength( actual, 5 );
-                
+
             }
         },
         {
             name: "Select all by predicate",
             fn: function() {
-                
+
                 var actual = selectionDoc
                     .queryAll( "*[@type=four-noindex]" );
                 assertLength( actual, 1 );
-                
+
             }
         },
         {
             name: "Select direct child",
             fn: function() {
-                
+
                 var actual = selectionDoc
                     .queryAll( "ex:type > ex:type" );
                 /*
@@ -107,22 +107,22 @@ module.exports = function ( LD ) {
                  * for now
                  */
                 // assertLength( actual, 2 );
-                
+
             }
         },
         {
             name: "Select nested",
             fn: function() {
-                
+
                 var actual = selectionDoc
                     .query( "ex:type > ex:type[@type=four-noindex]" )
                     .queryAll( "ex:grabThis @value" );
                 assertLength( actual, 2 );
-                
+
             }
         }
 
     ];
-    
-}
+
+};
 

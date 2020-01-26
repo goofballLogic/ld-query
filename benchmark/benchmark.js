@@ -12,9 +12,9 @@ var OPTS = ( function(args) {
         benchmark: /.*/,
         compareTo: "master",
         precision: 6
-        
+
     };
-    
+
     for ( var ii = 0; ii < args.length; ii++ ) {
 
         var arg = args[ ii ];
@@ -22,7 +22,7 @@ var OPTS = ( function(args) {
         switch( arg ) {
 
         case "--compare-to":
-            ret.compareTo = args[ ++ii ]
+            ret.compareTo = args[ ++ii ];
             break;
 
         case "--benchmark":
@@ -39,21 +39,21 @@ var OPTS = ( function(args) {
         }
 
     }
-    
+
     return ret;
-    
+
 }( process.argv.slice( 2 ) ) );
 
 function createSuite( name, LD ) {
     var suite = new Benchmark.Suite( name );
 
     var benchmarks = selectionSuite( LD );
-    
+
     var bmFilter = OPTS.benchmark;
     return benchmarks
         .filter( function( bm ) { return bmFilter.test( bm.name ); } )
         .reduce( function( s, bm ) { return s.add( bm.name, bm.fn ); },
-                 suite );
+            suite );
 
 }
 
@@ -61,13 +61,13 @@ function checkoutModuleAtPath(path) {
 
     var file = tmp.fileSync();
 
-    var source = spawn( 'git', [
+    var source = spawn( "git", [
         "show",
         path + ":src/ld-query.js",
     ] ).stdout;
 
     fs.writeFileSync( file.fd, source );
-        
+
     return file.name;
 
 }
@@ -75,7 +75,7 @@ function checkoutModuleAtPath(path) {
 var compareToPath = OPTS.compareTo;
 
 var modules = [ [ "Working Copy", "../src/ld-query.js" ],
-                [ compareToPath, checkoutModuleAtPath( compareToPath ) ] ];
+    [ compareToPath, checkoutModuleAtPath( compareToPath ) ] ];
 var suites = [];
 var results = [];
 
@@ -115,12 +115,12 @@ function checkSuitesForErrors(suites) {
 
         throw new Error("Benchmarks failed");
     }
-    
+
 }
 
 function processResults() {
     checkSuitesForErrors(results);
-    
+
     var current = results[ 0 ];
     var currentByName = current.reduce( indexBenchmarksByName, {} );
 
@@ -135,7 +135,7 @@ function processResults() {
         resultTable.cell( "Benchmark", bmName );
         var currBM = currentByName[ bmName ];
         var otherBM = otherByName[ bmName ];
-        
+
         resultTable.cell( current.name, currBM.mean * 1000, numberFormat );
         resultTable.cell( other.name, otherBM.mean * 1000, numberFormat );
 
@@ -146,7 +146,7 @@ function processResults() {
         resultTable.newRow();
 
     } );
-    
+
     console.log( "\nResults:\n" );
     console.log( "Mean Execution Time (milliseconds):\n" );
     console.log( resultTable.toString() );
@@ -161,7 +161,7 @@ function executeSuites() {
 
     } else {
 
-        var suite = suites.shift()
+        var suite = suites.shift();
 
         console.log("Benchmarking:", suite.name);
 
@@ -170,11 +170,11 @@ function executeSuites() {
 
                 results.push( this );
                 executeSuites();
-                
+
             })
             .run();
     }
-    
+
 }
 
 executeSuites();
