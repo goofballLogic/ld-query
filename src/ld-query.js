@@ -535,6 +535,15 @@
         // create an path alias '#document' to represent the root of the current QueryNode json
         var stepId = 0;
         steps = [{ id: stepId++, path: "#document", directChild: false, tests: [] }];
+
+        if(separatedSteps[0] && separatedSteps[0].key) {
+
+            // our first step is a bare test but we can't do this on the document as it might be anywhere in the structure
+            // so we create an empty step to attach the test to in the loop below.
+            steps.unshift({ id: stepId++, directChild: false, tests: [] });
+
+        }
+
         // process the extracted steps, to combine 'where' steps into keys on path steps.
         separatedSteps.forEach(function (step) {
 
