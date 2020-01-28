@@ -18,3 +18,8 @@ Feature: select values by type using query syntax
         Given I query for "[@id=test:2]"
         When I query the result for "test:name @value"
         Then the result should be "Thing 2"
+
+    Scenario: Shortcut query for node by id
+        Given I query for "#test:2"
+        When I query the result for "test:name @value"
+        Then the result should be "Thing 2"

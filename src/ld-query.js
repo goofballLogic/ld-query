@@ -461,7 +461,7 @@
     function extractStep(path, steps) {
 
         // try and extract a 'where' [@attribute=value] part from the start of the string
-        var wherePart = /^(\s*\*?)\[(.+?)=(.+?)\](.*)/.exec(path);
+        var wherePart = /^(\s*\*?)(?:\[(.+?)=(.+?)\]|#(\S*))(.*)/.exec(path);
         if (wherePart) {
 
             if (wherePart[1]) {
@@ -469,14 +469,16 @@
                 steps.push({ id: -1, path: undefined, directChild: false, tests: [] });
 
             }
-            var step = { key: wherePart[2].trim(), value: wherePart[3].trim() };
+            var step = wherePart[3]
+                ? { key: wherePart[2].trim(), value: wherePart[3].trim() }
+                : { key: "@id", value: wherePart[4].trim() };
             if (!nonExpandableValuePropNamePattern.test(step.key)) {
 
                 step.value = expand(step.value);
 
             }
             steps.push(step);
-            return (wherePart[4] || "");
+            return (wherePart[5] || "");
 
         }
         // try and extract a > part from the start of the string
