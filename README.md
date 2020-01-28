@@ -150,7 +150,8 @@ Start by creating the ld-query object:
 var context = LD( {
   "@vocab": "http://www.schema.org/",
   "foaf": "http://xmlns.com/foaf/0.1/",
-  "ex": "http://www.example.org#"
+  "ex": "http://www.example.org#",
+  "isbn": "http://www.isbnsearch.org/isbn/"
 } );
 
 var doc = context( data );
@@ -161,7 +162,8 @@ or
 var doc = LD( data, {
    "@vocab": "http://www.schema.org/",
    "foaf": "http://xmlns.com/foaf/0.1/",
-   "ex": "http://www.example.org#"
+   "ex": "http://www.example.org#",
+   "isbn": "http://www.isbnsearch.org/isbn/"
 } );
 ```
 
@@ -202,6 +204,10 @@ doc.query("somepropertynotinyourdocument @value")                 // null
 doc.queryAll("somepropertynotinyourdocument @value")              // []
 
 doc.query("ex:favouriteReads[@index=pynchon_gp] name @value")     // "Gravity's Rainbow"
+
+doc.query("*[@id=isbn:9780143039945] name @value")                // "Gravity's Rainbow"
+doc.query("[@id=isbn:9780143039945] name @value")                 // "Gravity's Rainbow"
+doc.query("#isbn:9780143039945 name @value")                      // "Gravity's Rainbow"
 
 doc.queryAll("ex:favouriteReads @index")                          // [ "banks-exc", "pynchon-gr" ]
 doc.query("ex:favouriteReads @id")                                // [ "http://www.isbnsearch.org/isbn/9780553575378" ]
