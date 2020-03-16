@@ -36,7 +36,7 @@ Feature: select values by type using multiple attributes
     Scenario: Query for attributes with whitespace inside attributes
         When I query for "ex:type[ @id=ex:type1 ][ @index=index1 ] ex:grabThis @value"
         Then the result should be "One-Two"
-    
+
     Scenario: Query for attributes with whitespace between operator and values
         When I query for "ex:type[@id = ex:type1][@index=index1] ex:grabThis @value"
         Then the result should be "One-Two"
@@ -44,3 +44,9 @@ Feature: select values by type using multiple attributes
     Scenario: Attribute selectors should work on their own
         When I query for "ex:parent [@index=index2] @value"
         Then the result should be "I am child 2"
+
+    Scenario: Attribute selectors should work with no value specified
+        When I query for all "ex:type[@id]"
+        And I select the last result
+        And I query the result for "> @id"
+        Then the result should be "http://www.example.org#type4"

@@ -175,6 +175,14 @@ When("I get the result's json", function () {
 
 });
 
+When('I select the last result', function () {
+
+    if(!Array.isArray(this.result)) throw new Error("Result is not an array");
+    if(this.result.length === 0) throw new Error("No results were found");
+    this.result = this.result.pop();
+
+});
+
 Then("the json should match", function (table) {
 
     var expected = JSON.stringify(JSON.parse(table.hashes()[0].json));

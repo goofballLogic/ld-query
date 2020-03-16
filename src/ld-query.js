@@ -137,28 +137,22 @@
 
     function StackFrame(parent, key, ctx) {
 
-        var ret;
+        var ret = {
+            context: ctx,
+            index: -1,
+            key: key
+        };
         if (isArray(ctx)) {
 
             if ("@type" === key) {
 
-                ret = {
-                    type: "leaf",
-                    context: ctx,
-                    index: -1,
-                    key: key,
-                    items: []
-                };
+                ret.type = "leaf";
+                ret.items = [];
 
             } else {
 
-                ret = {
-                    type: "array",
-                    context: ctx,
-                    index: -1,
-                    key: key,
-                    items: arrayRange(ctx)
-                };
+                ret.type = "array";
+                ret.items = arrayRange(ctx);
 
             }
 
@@ -166,23 +160,13 @@
 
             var keys = Object.keys(ctx);
             keys.reverse();
-            ret = {
-                type: "object",
-                context: ctx,
-                index: -1,
-                key: key,
-                items: keys
-            };
+            ret.type = "object";
+            ret.items = keys;
 
         } else {
 
-            ret = {
-                type: "leaf",
-                context: ctx,
-                index: -1,
-                key: key,
-                items: []
-            };
+            ret.type = "leaf";
+            ret.items = [];
 
         }
 
@@ -291,6 +275,12 @@
 
     function testPathKey(nodePathEntry, stepKey, stepValue) {
 
+        if (typeof stepValue === "undefined") {
+
+            return stepKey in nodePathEntry;
+
+        }
+
         var pathValue = nodePathEntry[stepKey];
         if (!pathValue) { return false; }
         if (isArray(stepValue)) {
@@ -364,15 +354,16 @@
             var bookmark = nodePath.length;
             var directChild = false;
             var first = true;
-
             for (var i = 0; i < steps.length; i++) {
 
                 var step = steps[i];
-
                 if (step.directChild) {
 
                     directChild = true;
-                    continue;
+
+                } else if (step.traverseToParent) {
+
+                    bookmark++;
 
                 } else {
 
@@ -460,25 +451,41 @@
 
     function extractStep(path, steps) {
 
-        // try and extract a 'where' [@attribute=value] part from the start of the string
-        var wherePart = /^(\s*\*?)(?:\[(.+?)=(.+?)\]|#(\S*))(.*)/.exec(path);
-        if (wherePart) {
+        var goUpPart = /^(?:\s*?)(?:\.\.)(.*)/.exec(path);
+        if (goUpPart) {
 
-            if (wherePart[1]) {
+            steps.push({ traverseToParent: true });
+            return goUpPart[1];
+
+        }
+        // try and extract a 'where' [@attribute=value] part from the start of the string
+        /*
+            group 1 - prefix space or *
+            group 2 - attribute name with no value specified
+            group 3 - attribute name for specified value
+            group 4 - specified attribute value
+            group 5 - id
+            gropu 6 - remainder
+        */
+        var wherePart = /^(\s*\*?)(?:\[([^\]=]*)\]|\[(.+?)=(.+?)\]|#(\S*))(.*)/.exec(path);
+        if (wherePart) {
+            if (wherePart[1]) { // prefix space or *
 
                 steps.push({ id: -1, path: undefined, directChild: false, tests: [] });
 
             }
-            var step = wherePart[3]
-                ? { key: wherePart[2].trim(), value: wherePart[3].trim() }
-                : { key: "@id", value: wherePart[4].trim() };
-            if (!nonExpandableValuePropNamePattern.test(step.key)) {
+            var step = wherePart[2] // attribute name with no value specified
+                ? { key: wherePart[2].trim() }
+                : wherePart[4] // specified attribute value
+                    ? { key: wherePart[3].trim(), value: wherePart[4].trim() }
+                    : { key: "@id", value: wherePart[5].trim() }; // id
+            if (!nonExpandableValuePropNamePattern.test(step.key) && step.value) {
 
                 step.value = expand(step.value);
 
             }
             steps.push(step);
-            return (wherePart[5] || "");
+            return (wherePart[6] || ""); // remainder
 
         }
         // try and extract a > part from the start of the string
@@ -517,7 +524,6 @@
 
         var steps;
         var shouldCache = state.cacheSteps;
-
         if (shouldCache) {
 
             steps = stepCache[path];
@@ -598,7 +604,6 @@
 
         var steps = getSteps(state, path);
         if (!steps.length) { return { json: null }; }
-
         var paths = getCachedPaths(state, json);
         var walker = paths ? cachedWalk : walk;
         var found = walker(paths || json,
