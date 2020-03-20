@@ -50,3 +50,9 @@ Feature: select values by type using multiple attributes
         And I select the last result
         And I query the result for "> @id"
         Then the result should be "http://www.example.org#type4"
+
+    Scenario: Attribute selectors should work with wildcards
+        When I query for all "*[@id]"
+        And I select the last result
+        And I query the result for "> @id"
+        Then the result should be "http://www.example.org#type4"

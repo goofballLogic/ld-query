@@ -277,7 +277,9 @@
 
         if (typeof stepValue === "undefined") {
 
-            return stepKey in nodePathEntry;
+            return nodePathEntry
+                && (typeof nodePathEntry === "object")
+                && stepKey in nodePathEntry;
 
         }
 
