@@ -48,7 +48,7 @@
             name
 
     */
-    var nonExpandablePropertyNames = /@.*/;
+    var nonExpandablePropertyNames = /@.*|\*{1}/;
 
     /*
         Non-expandable value property names are the names of properties whose values should not be expanded by replacing aliases or prepending with @vocab
@@ -320,7 +320,7 @@
             // check whether all keys in step ( path & @attributes ) match
             var match = false;
 
-            if ("undefined" === typeof stepPath || stepPath === node.key) {
+            if ("undefined" === typeof stepPath || "*" === stepPath || stepPath === node.key) {
 
                 match = true;
 
@@ -472,6 +472,7 @@
         */
         var wherePart = /^(\s*\*?)(?:\[([^\]=]*)\]|\[(.+?)=(.+?)\]|#(\S*))(.*)/.exec(path);
         if (wherePart) {
+
             if (wherePart[1]) { // prefix space or *
 
                 steps.push({ id: -1, path: undefined, directChild: false, tests: [] });

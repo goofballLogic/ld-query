@@ -98,3 +98,7 @@ Feature: select values using query syntax
         | "http://schema.org/Person"                          |
         | "http://schema.org/Book"                            |
         | "http://schema.org/Book", "http://schema.org/Movie" |
+
+    Scenario: Query using wildcard
+      When I query for all "*"
+      Then the result should be an array of 29 QueryNodes
