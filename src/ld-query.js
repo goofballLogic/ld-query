@@ -325,6 +325,7 @@
                 match = true;
 
                 var tests = step.tests;
+
                 for (var t = 0; t < tests.length; t++) {
 
                     var test = tests[t];
@@ -477,9 +478,9 @@
 
             }
             var step = wherePart[2] // attribute name with no value specified
-                ? { key: wherePart[2].trim() }
+                ? { key: expand(wherePart[2].trim()) }
                 : wherePart[4] // specified attribute value
-                    ? { key: wherePart[3].trim(), value: wherePart[4].trim() }
+                    ? { key: expand(wherePart[3].trim()), value: wherePart[4].trim() }
                     : { key: "@id", value: wherePart[5].trim() }; // id
             if (!nonExpandableValuePropNamePattern.test(step.key) && step.value) {
 

@@ -56,3 +56,12 @@ Feature: select values by type using multiple attributes
         And I select the last result
         And I query the result for "> @id"
         Then the result should be "http://www.example.org#type4"
+
+    Scenario: Attribute selectors with compact (aliased) keys should work
+        When I query for all "*[ex:grabThis]"
+        Then the result should be an array of 5 QueryNodes
+
+    Scenario: Attribute selectors with compact (aliased) keys should work
+        When I query for "ex:child[@value=I am child 2]"
+        And I query the result for "> @index"
+        Then the result should be "index2"
