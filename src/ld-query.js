@@ -315,6 +315,12 @@
         for (i = start; -1 < i; i--) {
 
             var node = nodePath[i];
+            if(!node) {
+
+                match = false;
+                break;
+
+            }
             var nodeVal = node.value;
             var stepPath = step.path;
             // check whether all keys in step ( path & @attributes ) match
@@ -363,10 +369,6 @@
                 if (step.directChild) {
 
                     directChild = true;
-
-                } else if (step.traverseToParent) {
-
-                    bookmark++;
 
                 } else {
 
@@ -454,13 +456,6 @@
 
     function extractStep(path, steps) {
 
-        var goUpPart = /^(?:\s*?)(?:\.\.)(.*)/.exec(path);
-        if (goUpPart) {
-
-            steps.push({ traverseToParent: true });
-            return goUpPart[1];
-
-        }
         // try and extract a 'where' [@attribute=value] part from the start of the string
         /*
             group 1 - prefix space or *
@@ -578,7 +573,6 @@
             stepCache[path] = steps;
 
         }
-
         return steps;
 
     }

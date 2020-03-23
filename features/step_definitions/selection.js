@@ -113,6 +113,11 @@ When("then I query the result for {string}", function (selector) {
 
 When("then I query the result for all {string}", function (selector) {
 
+    if(!this.result) {
+
+        throw new Error("Result was null");
+
+    }
     if (this.result.isFinal) {
 
         throw new Error("Result was final - can't query any further");

@@ -11,7 +11,6 @@ Feature: traverse back out of a JSON node to parent nodes
 
     Scenario: Query for the names of grandparents of Paul
       When I query for "name[@value=Paul]"
-      And I navigate to the parent 3 times
-      And I query for all "> name @value"
+      And I navigate to the parent 4 times
+      And then I query the result for all "> name @value"
       Then the result should be the array [ "Sam", "Robert" ]
-
